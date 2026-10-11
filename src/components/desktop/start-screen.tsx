@@ -98,7 +98,7 @@ export default function StartScreen() {
           Press <span className="text-white">F</span> to pay respects
         </p>
         <p>
-          Press <span className="text-white">Enter</span> load the project
+          Press <span className="text-white">Enter</span> or click to start
         </p>
       </div>
 

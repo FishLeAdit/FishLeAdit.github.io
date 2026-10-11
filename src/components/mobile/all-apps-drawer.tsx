@@ -108,7 +108,7 @@ export default function AllAppsDrawer({
             </motion.div>
 
             <div className="bg-[#c0c0c0] p-2 text-[10px] text-black win98-border">
-              Tip: Double-click to open programs
+              Tip: Tap an app to open it
             </div>
           </motion.div>
         </>

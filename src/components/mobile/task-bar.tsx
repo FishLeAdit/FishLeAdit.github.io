@@ -21,11 +21,12 @@ export default function Taskbar({
   onBack,
 }: TaskbarProps) {
   return (
-    <div className="crt fixed bottom-0 left-0 right-0 z-50 h-10 bg-[#c0c0c0] border-[2px] border-solid border-black border-t-white border-l-white rounded-none border-b-0 flex items-center px-2 gap-2 select-none">
+    <div className="crt fixed bottom-0 left-0 right-0 z-50 h-[calc(3.5rem+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] bg-[#c0c0c0] border-[2px] border-solid border-black border-t-white border-l-white rounded-none border-b-0 flex items-center px-2 gap-2 select-none">
       <motion.button
         whileTap={buttonTap}
         onClick={onRecentApps}
-        className="h-8 w-8 border-[2px] border-solid border-black border-t-white border-l-white rounded-none px-[2px] gap-1 hover:border-black hover:border-b-white hover:border-r-white flex items-center justify-center"
+        aria-label="Recent apps"
+        className="h-11 w-11 border-[2px] border-solid border-black border-t-white border-l-white rounded-none px-[2px] gap-1 hover:border-black hover:border-b-white hover:border-r-white flex items-center justify-center"
       >
         <svg
           width="16"
@@ -42,7 +43,8 @@ export default function Taskbar({
       <motion.button
         whileTap={buttonTap}
         onClick={onHome}
-        className="h-8 w-8 border-[2px] border-solid border-black border-t-white border-l-white rounded-none px-[2px] gap-1 hover:border-black hover:border-b-white hover:border-r-white flex items-center justify-center"
+        aria-label="Home"
+        className="h-11 w-11 border-[2px] border-solid border-black border-t-white border-l-white rounded-none px-[2px] gap-1 hover:border-black hover:border-b-white hover:border-r-white flex items-center justify-center"
       >
         <Image src="/windows.png" alt="Home Icon" width={16} height={16} />
       </motion.button>
@@ -50,7 +52,8 @@ export default function Taskbar({
       <motion.button
         whileTap={buttonTap}
         onClick={onBack}
-        className="h-8 w-8 border-[2px] border-solid border-black border-t-white border-l-white rounded-none px-[2px] gap-1 hover:border-black hover:border-b-white hover:border-r-white flex items-center justify-center"
+        aria-label="Back"
+        className="h-11 w-11 border-[2px] border-solid border-black border-t-white border-l-white rounded-none px-[2px] gap-1 hover:border-black hover:border-b-white hover:border-r-white flex items-center justify-center"
       >
         <svg width="16" height="16" viewBox="0 0 16 16">
           <path
@@ -65,7 +68,7 @@ export default function Taskbar({
 
       <div className="flex-1 h-full border border-[#808080] mx-1" />
 
-      <div className="h-8 flex items-center justify-center border-[2px] border-solid border-black border-t-white border-l-white rounded-none px-[2px] gap-1 hover:border-black hover:border-b-white hover:border-r-white">
+      <div className="h-11 flex items-center justify-center border-[2px] border-solid border-black border-t-white border-l-white rounded-none px-[2px] gap-1 hover:border-black hover:border-b-white hover:border-r-white">
         <Clock showSeconds={true} className="" />
       </div>
     </div>

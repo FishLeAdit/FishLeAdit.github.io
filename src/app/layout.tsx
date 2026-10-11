@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Titillium_Web, Inter, Jost } from "next/font/google";
 import "./globals.css";
 
@@ -28,6 +28,15 @@ export const metadata: Metadata = {
   title: "Jawad Adit Chowdhury | 98.portfolio",
   description:
     "Portfolio of Jawad Adit Chowdhury, full-stack and ML developer, built as a Windows 98 desktop.",
+};
+
+// viewport-fit=cover lets the mobile layout pad itself around notches and
+// the home indicator with env(safe-area-inset-*).
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({

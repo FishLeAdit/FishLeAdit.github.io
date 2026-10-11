@@ -1,8 +1,24 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+
+const TIPS = [
+  "Tap Projects to see what I've built. Each project has its README, a live demo and the source code.",
+  "The Pediatric Brain Tumor project has a write-up page about my thesis. Open it, then tap Write-up.htm.",
+  "Want to get in touch? Contact me has my e-mail, phone, GitHub and LinkedIn.",
+  "My Resume opens my CV right here. There's a Download PDF button at the top.",
+  "This site is a Windows 98 desktop. Open it on a computer for draggable windows, themes and wallpapers.",
+];
 
 export default function TipsBox() {
+  // Picked after mount so the server and client render the same first tip.
+  const [tip, setTip] = useState(TIPS[0]);
+
+  useEffect(() => {
+    setTip(TIPS[Math.floor(Math.random() * TIPS.length)]);
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 2 }}
@@ -19,17 +35,11 @@ export default function TipsBox() {
         </div>
 
         <div className="flex-1">
-          <h3 className="text-[11px] font-bold mb-1 text-black">
+          <h3 className="text-xs font-bold mb-1 text-black">
             Did you know...
           </h3>
 
-          <p className="text-[10px] leading-tight text-black">
-            Touch your monitor. It is warm, like flesh.
-            <br />
-            But it is not flesh.
-            <br />
-            Not yet.
-          </p>
+          <p className="text-xs leading-snug text-black">{tip}</p>
         </div>
       </div>
 

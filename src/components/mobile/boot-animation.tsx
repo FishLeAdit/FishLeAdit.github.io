@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { generateBootSequence } from "@/lib/utils";
+import { playSound } from "../shared/sound-manager";
 
 interface BootAnimationProps {
   onComplete: () => void;
@@ -13,7 +14,7 @@ const NORMAL_FOOTER_MESSAGES = [
   "Initializing bugs... done.",
   "Press F8 to panic.",
   "Insert floppy disk to continue.",
-  "Summoning Clippy... please wait.",
+  "Defragmenting portfolio... please wait.",
   "It worked on my machine.",
   "Optimized for 56k modems.",
 ];
@@ -36,6 +37,16 @@ export default function BootAnimation({ onComplete }: BootAnimationProps) {
   const [footerMessage, setFooterMessage] = useState("");
   const [isRare, setIsRare] = useState(false);
 
+  // Boot ends on a tap: phones only allow audio after a user gesture,
+  // so the tap is what lets the startup chime play.
+  const [ready, setReady] = useState(false);
+
+  const handleStart = () => {
+    if (!ready) return;
+    playSound("startup");
+    onComplete();
+  };
+
   useEffect(() => {
     setBootMessages(generateBootSequence());
   }, []);
@@ -49,10 +60,11 @@ export default function BootAnimation({ onComplete }: BootAnimationProps) {
       if (message.includes("ERROR")) setHasError(true);
       if (message.includes("WARNING")) setHasWarning(true);
 
+      // Quicker than the desktop boot; a long wait is worse on a phone.
       const delay =
         message.includes("ERROR") || message.includes("WARNING")
-          ? Math.random() * 500 + 800
-          : Math.random() * 300 + 300;
+          ? Math.random() * 300 + 400
+          : Math.random() * 120 + 120;
 
       const timer = setTimeout(() => {
         setCurrentIndex((prev) => prev + 1);
@@ -61,10 +73,10 @@ export default function BootAnimation({ onComplete }: BootAnimationProps) {
 
       return () => clearTimeout(timer);
     } else {
-      const doneTimer = setTimeout(onComplete, 1500);
+      const doneTimer = setTimeout(() => setReady(true), 400);
       return () => clearTimeout(doneTimer);
     }
-  }, [currentIndex, bootMessages, onComplete]);
+  }, [currentIndex, bootMessages]);
 
   useEffect(() => {
     const roll = Math.random();
@@ -109,6 +121,9 @@ export default function BootAnimation({ onComplete }: BootAnimationProps) {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
+      onClick={handleStart}
+      role={ready ? "button" : undefined}
+      aria-label={ready ? "Tap to start" : undefined}
     >
       <motion.div
         className="mb-10 flex justify-center w-full"
@@ -160,6 +175,16 @@ export default function BootAnimation({ onComplete }: BootAnimationProps) {
           Loading system… {Math.floor(progress)}%
         </p>
       </div>
+
+      {ready && (
+        <motion.p
+          className="text-white text-base mb-6"
+          animate={{ opacity: [1, 0.2, 1] }}
+          transition={{ duration: 1.2, repeat: Infinity }}
+        >
+          Tap anywhere to start
+        </motion.p>
+      )}
 
       <motion.p
         className={`text-xs absolute bottom-8 ${footerColor}`}

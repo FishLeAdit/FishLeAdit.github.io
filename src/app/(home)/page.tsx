@@ -7,7 +7,9 @@ import { useIsDesktop } from "@/hooks/use-is-desktop";
 export default function Home() {
   const isDesktop = useIsDesktop();
 
-  if (isDesktop === null) return null;
+  // Until the screen size is known, show the boot screen's black instead of
+  // a white flash (the static export's HTML is rendered before this runs).
+  if (isDesktop === null) return <div className="fixed inset-0 bg-black" />;
 
   return isDesktop ? <DesktopLayout /> : <MobileLayout />;
 }

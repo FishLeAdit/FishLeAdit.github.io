@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Document, Page } from "react-pdf";
 import { pdfjs } from "react-pdf";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "../../ui/separator";
 import HourglassLoading from "../../shared/hourglass-loading";
 
@@ -12,15 +11,32 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url
 ).toString();
 
+// Pages render at the window's width (capped), so the CV fits a phone
+// screen and the desktop window without sideways scrolling.
+const MAX_PAGE_WIDTH = 900;
+
 export default function PdfViewer({ documentPath }: { documentPath: string }) {
   const [numPages, setNumPages] = useState<number>();
+  const [width, setWidth] = useState<number>();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      setWidth(Math.min(entry.contentRect.width - 16, MAX_PAGE_WIDTH));
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
   }
 
   return (
-    <ScrollArea className="w-full h-full bg-white">
+    <div ref={containerRef} className="w-full h-full overflow-auto bg-white">
       <Document
         file={documentPath}
         onLoadSuccess={onDocumentLoadSuccess}
@@ -29,22 +45,23 @@ export default function PdfViewer({ documentPath }: { documentPath: string }) {
         }
         noData={"Page not found."}
       >
-        {(Array.apply(null, Array(numPages)) as number[])
-          .map((_, i: number) => i + 1)
-          .map((page: number) => {
-            return (
-              <div key={page} className="w-full flex flex-col items-center">
-                <Page
-                  pageNumber={page}
-                  renderAnnotationLayer={false}
-                  renderTextLayer={false}
-                  scale={1.49}
-                />
-                {page === 1 && <Separator className="h-2" />}
-              </div>
-            );
-          })}
+        {width &&
+          (Array.apply(null, Array(numPages)) as number[])
+            .map((_, i: number) => i + 1)
+            .map((page: number) => {
+              return (
+                <div key={page} className="w-full flex flex-col items-center py-2">
+                  <Page
+                    pageNumber={page}
+                    renderAnnotationLayer={false}
+                    renderTextLayer={false}
+                    width={width}
+                  />
+                  {page < (numPages ?? 0) && <Separator className="h-2" />}
+                </div>
+              );
+            })}
       </Document>
-    </ScrollArea>
+    </div>
   );
 }

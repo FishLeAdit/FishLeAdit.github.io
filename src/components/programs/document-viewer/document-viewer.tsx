@@ -11,6 +11,11 @@ import PdfViewer from "./pdf-viewer";
 import MarkdownViewer from "./markdown-viewer";
 import { useAppSelector } from "@/store/store";
 
+// PDFs live on this site; markdown documents are GitHub READMEs ("/owner/repo").
+export function documentHref(path: string, type: "pdf" | "markdown") {
+  return type === "markdown" ? `https://github.com${path}#readme` : path;
+}
+
 export default function DocumentViewer() {
   const { documentPath, documentType, title, folderName, icon } =
     useAppSelector((state) => state.documentViewer);
@@ -40,7 +45,7 @@ export default function DocumentViewer() {
 
           <div className="flex items-center gap-1">
             {documentPath && (
-              <Link href={documentPath} target="_blank">
+              <Link href={documentHref(documentPath, documentType)} target="_blank">
                 <Button
                   variant="ghost"
                   className="flex h-max w-20 flex-col rounded-none border border-transparent px-1 py-0 hover:border-black hover:border-l-white hover:border-t-white"

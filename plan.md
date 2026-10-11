@@ -160,7 +160,8 @@ Packages to remove: `three`, `@types/three`, `gsap`, `@gsap/react`, `youtube-pla
 20. Replace every "Alexandre Dresch" string and link (`layout.tsx`, `start-screen.tsx`, `welcome-message.tsx`, `dock.tsx`, the about dialog if it survives). Update the page title and description. Replace the `/AlexandreDresch/98.portfolio` document path and `englishCV.pdf`.
 21. Update `README.md`, including the Supabase setup SQL so the repo is reproducible. Credit the original template author. **Check for a LICENSE file before publishing.**
 
-### Phase 5: Mobile responsiveness
+### Phase 5: Mobile responsiveness ✅
+**Outcome:** M1–M10 done and tested in headless Edge at 360, 390, 768 and 1024 px, plus a 390 → 1180 rotation. Phones get My Resume (PDF fits the width, Download PDF button) and READMEs (Open on GitHub button). A single tap opens a project, with its description shown on top. Back steps out of a project before closing the window, and Home closes everything. The boot ends on "Tap anywhere to start", which also unlocks the startup chime, and runs about 2× faster. Taskbar buttons are 44 px, and safe-area insets and `100dvh` are in place. Also fixed: the desktop start screen accepts a tap or click (landscape tablets have no Enter key), the boot plays once per page load across layout switches, the first paint is black instead of white, the desktop PDF fits its window, and the README "Download" link went to a 404.
 **Principle:** desktop (1024px and up) stays the faithful Win98 template. Mobile gets its own layout that shares the same data and content. Nothing on PC changes to accommodate phones.
 
 The template already does this. `use-is-desktop.ts` switches at **1024px** between `DesktopLayout` (draggable windows, taskbar, Start menu) and `MobileLayout` (phone-style launcher with status bar, clock widget, app icons, "all apps" and "recent apps" drawers, full-screen `mobile-window`). We keep that and fix what the trimming would break.

@@ -75,7 +75,7 @@ export default function ContactContainer() {
               </span>
 
               <div className="flex gap-1">
-                <Win98Button asChild className="min-w-16">
+                <Win98Button asChild className="min-w-16 h-10 lg:h-7">
                   <a
                     href={row.href}
                     target={row.href.startsWith("http") ? "_blank" : undefined}
@@ -87,7 +87,7 @@ export default function ContactContainer() {
 
                 {row.copy && (
                   <Win98Button
-                    className="min-w-16"
+                    className="min-w-16 h-10 lg:h-7"
                     onClick={() => handleCopy(row.label, row.value)}
                   >
                     {copied === row.label ? "Copied!" : "Copy"}
@@ -100,7 +100,7 @@ export default function ContactContainer() {
       </fieldset>
 
       <div className="flex justify-end mt-4">
-        <Win98Button asChild>
+        <Win98Button asChild className="h-10 lg:h-7">
           <a href={RESUME.documentPath} download>
             Download CV
           </a>

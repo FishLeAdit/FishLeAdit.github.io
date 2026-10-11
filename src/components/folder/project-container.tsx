@@ -60,7 +60,26 @@ export default function ProjectContainer({ projects }: ProjectContainerProps) {
   };
 
   return (
-    <div className="size-full min-w-0 flex">
+    <div className="size-full min-w-0 flex flex-col">
+      {/* Phones have no side panel, so show what the project is up top. */}
+      {!isDesktop && isFileOpen && selectedFile && (
+        <div className="flex gap-3 items-start border-b border-[#808080] bg-white p-3">
+          <Image
+            src={getProjectIcon(selectedFile.type)}
+            alt=""
+            width={32}
+            height={32}
+            className="shrink-0"
+          />
+          <div className="min-w-0">
+            <p className="font-semibold">{selectedFile.name}</p>
+            <p className="text-sm text-[#404040] leading-snug">
+              {selectedFile.description}
+            </p>
+          </div>
+        </div>
+      )}
+
       {isFileOpen && selectedFile ? (
         <div className="grid w-full h-fit grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4 p-4">
           {selectedFile.github_url && (
@@ -151,7 +170,10 @@ export default function ProjectContainer({ projects }: ProjectContainerProps) {
             <div
               key={project.id}
               className="flex flex-col items-center cursor-pointer"
-              onClick={() => handleSelectProject(project)}
+              onClick={() => {
+                handleSelectProject(project);
+                if (!isDesktop) handleOpenProject();
+              }}
               onDoubleClick={handleOpenProject}
             >
               <Image

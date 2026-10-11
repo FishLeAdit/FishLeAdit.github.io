@@ -13,13 +13,29 @@ import BootAnimation from "./boot-animation";
 import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Folder } from "@/types";
-import { folders } from "@/constants";
+import { folders, RESUME } from "@/constants";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { openWindow, closeWindow } from "@/store/window-manager-slice";
+import { closeFile } from "@/store/folders-slice";
+import { openDocument } from "@/store/document-viewer-slice";
+import { bootState } from "@/lib/boot-state";
 import MobileWindow from "./mobile-window";
 
+// My Resume is a document, not a folder; it opens in the Document Viewer (25).
+const resumeItem: Folder = {
+  id: 25,
+  name: RESUME.title,
+  image: RESUME.icon,
+  isOpen: false,
+  isMaximized: false,
+  isMinimized: false,
+  isDocument: true,
+  documentType: "pdf",
+  documentPath: RESUME.documentPath,
+};
+
 export default function MobileLayout() {
-  const [showBoot, setShowBoot] = useState(true);
+  const [showBoot, setShowBoot] = useState(!bootState.done);
   const [showAllApps, setShowAllApps] = useState(false);
   const [showRecentApps, setShowRecentApps] = useState(false);
   const [recentApps, setRecentApps] = useState<
@@ -30,11 +46,10 @@ export default function MobileLayout() {
 
   const isDrawerOpen = showAllApps || showRecentApps;
 
-  const mainFolders = folders.filter((f) =>
-    ["Projects", "Contact me"].includes(f.name)
-  );
+  const apps = [...folders, resumeItem];
 
   const { dockItems } = useAppSelector((state) => state.windows);
+  const { isFileOpen } = useAppSelector((state) => state.folders);
 
   useEffect(() => {
     document.body.style.overflow = isDrawerOpen ? "hidden" : "";
@@ -52,16 +67,15 @@ export default function MobileLayout() {
       ].slice(0, 6);
     });
 
+    if (folder.id === resumeItem.id) dispatch(openDocument(RESUME));
     dispatch(openWindow(folder.id));
   };
 
   const handleHomeClick = () => {
     setShowAllApps(false);
     setShowRecentApps(false);
-    if (dockItems.length > 0) {
-      const lastOpened = dockItems[dockItems.length - 1];
-      dispatch(closeWindow(lastOpened.id));
-    }
+    dispatch(closeFile());
+    dockItems.forEach((item) => dispatch(closeWindow(item.id)));
     window.scrollTo({ top: 0 });
   };
 
@@ -71,6 +85,12 @@ export default function MobileLayout() {
   };
 
   const handleBackClick = () => {
+    // Inside a project, Back returns to the project list first.
+    if (dockItems.length > 0 && isFileOpen) {
+      dispatch(closeFile());
+      return;
+    }
+
     if (dockItems.length > 0) {
       const lastOpened = dockItems[dockItems.length - 1];
       dispatch(closeWindow(lastOpened.id));
@@ -84,21 +104,26 @@ export default function MobileLayout() {
   if (showBoot) {
     return (
       <AnimatePresence>
-        <BootAnimation onComplete={() => setShowBoot(false)} />
+        <BootAnimation
+          onComplete={() => {
+            bootState.done = true;
+            setShowBoot(false);
+          }}
+        />
       </AnimatePresence>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[url('/windows-98-cloud.jpg')] crt flex flex-col relative overflow-hidden">
-      <div className="flex-1 overflow-y-auto pb-20 px-2 py-4">
+    <div className="min-h-[100dvh] bg-[url('/windows-98-cloud.jpg')] bg-cover crt flex flex-col relative overflow-hidden">
+      <div className="flex-1 overflow-y-auto pb-24 px-2 pt-[calc(1rem+env(safe-area-inset-top))]">
         <StatusBar />
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
           <ClockWidget />
 
-          <div className="grid grid-cols-2 gap-2 col-span-2 md:col-span-3">
-            {mainFolders.map((folder) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 col-span-2 md:col-span-3">
+            {apps.map((folder) => (
               <AppIcon
                 key={folder.id}
                 item={folder}
@@ -147,7 +172,7 @@ export default function MobileLayout() {
 
       <AllAppsDrawer
         show={showAllApps}
-        folders={folders}
+        folders={apps}
         onClose={() => setShowAllApps(false)}
         onFolderClick={handleFolderClick}
       />

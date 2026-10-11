@@ -8,13 +8,21 @@ import { AnimatePresence, motion } from "framer-motion";
 import BootTerminal from "./boot-terminal";
 import { playSound } from "../shared/sound-manager";
 import { useAppSelector } from "@/store/store";
+import { bootState } from "@/lib/boot-state";
 
 export default function DesktopLayout() {
-  const [showStartScreen, setShowStartScreen] = useState(true);
+  // Skip the boot if it already ran on this page load (e.g. a tablet rotated
+  // from the phone layout into this one).
+  const [showStartScreen, setShowStartScreen] = useState(!bootState.done);
   const [showTerminal, setShowTerminal] = useState(false);
-  const [showDesktop, setShowDesktop] = useState(false);
+  const [showDesktop, setShowDesktop] = useState(bootState.done);
   const [triggerAnimation, setTriggerAnimation] = useState(false);
 
+  // Tablets in landscape get this layout without a keyboard, so a tap or
+  // click starts the boot as well as Enter.
+  const handleStart = () => {
+    if (showStartScreen && !triggerAnimation) setTriggerAnimation(true);
+  };
 
   const { wallpaper, wallpaperMode } = useAppSelector(
     (state) => state.settings.applied,
@@ -42,6 +50,7 @@ export default function DesktopLayout() {
   const handleBootComplete = () => {
     setShowTerminal(false);
     setShowDesktop(true);
+    bootState.done = true;
 
     playSound("startup");
   };
@@ -57,6 +66,7 @@ export default function DesktopLayout() {
             exit={{ scale: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
             onAnimationComplete={handleStartScreenComplete}
+            onClick={handleStart}
           >
             <StartScreen />
           </motion.div>
