@@ -28,7 +28,6 @@ import MessageContainer from "./message-container";
 import Link from "next/link";
 import DockList from "./dock-list";
 import { openWindow } from "@/store/window-manager-slice";
-import { useMonitor } from "@/hooks/use-monitor";
 import { openDocument } from "@/store/document-viewer-slice";
 import { DocumentViewerShortcutProps } from "../programs/document-viewer/document-viewer-shortcut";
 
@@ -36,8 +35,6 @@ export default function Dock() {
   const dispatch = useAppDispatch();
 
   const projectsStatus = useAppSelector((state) => state.projects.status);
-
-  const { isMonitor2 } = useMonitor();
 
   const handleOpen = (id: number) => {
     dispatch(openWindow(id));
@@ -71,8 +68,7 @@ export default function Dock() {
 
   return (
     <Card className="crt w-full h-8 flex items-center bg-[#C0C0C0] fixed bottom-0 left-0 rounded-none shrink-0 border-white border-0 border-t-[1px] z-[100]">
-      {!isMonitor2 && (
-        <>
+      <>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -101,111 +97,46 @@ export default function Dock() {
                 </h1>
               </div>
               <div className="w-full pr-2">
-                <DropdownMenuLabel>Alexandre Dresch</DropdownMenuLabel>
+                <DropdownMenuLabel>Jawad Adit Chowdhury</DropdownMenuLabel>
 
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => handleOpen(3)}>
-                    BackEnd
-                    <DropdownMenuShortcut>⇧⌘B</DropdownMenuShortcut>
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handleOpen(4)}>
-                    FrontEnd
-                    <DropdownMenuShortcut>⌘F</DropdownMenuShortcut>
+                    Projects
+                    <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleOpen(5)}>
-                    Mobile
-                    <DropdownMenuShortcut>⌘M</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-
-                <DropdownMenuSeparator />
-
-                <DropdownMenuGroup>
                   <DropdownMenuItem
                     onClick={() =>
                       handleOpenDocument({
-                        title: "98.portfolio",
-                        documentPath: "/AlexandreDresch/98.portfolio",
-                        documentType: "markdown",
-                        folderName: "98.portfolio",
-                        icon: "/icons/help-book.png",
+                        title: "My Resume",
+                        documentPath: "./englishCV.pdf",
+                        documentType: "pdf",
+                        folderName: "My Resume",
+                        icon: "/icons/file.png",
                       })
                     }
                   >
-                    About
-                    <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                    My Resume
+                    <DropdownMenuShortcut>⌘R</DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleOpen(16)}>
-                    MS-DOS Prompt
-                    <DropdownMenuShortcut>⌘T</DropdownMenuShortcut>
+                  <DropdownMenuItem onClick={() => handleOpen(8)}>
+                    Contact me
+                    <DropdownMenuShortcut>⌘C</DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleOpen(18)}>
-                    Settings
-                    <DropdownMenuShortcut>⌘A</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger className="data-[state=open]:text-white">
-                      Programs
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent className="crt flex px-0 flex-col bg-[#C0C0C0] border-[1px] border-solid border-b-black border-r-black border-t-white border-l-white rounded-none">
-                        <DropdownMenuItem onClick={() => handleOpen(24)}>
-                          Winamp
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-
-                        <DropdownMenuItem onClick={() => handleOpen(10)}>
-                          Internet Explorer
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-
-                        <DropdownMenuItem onClick={() => handleOpen(14)}>
-                          Paint
-                        </DropdownMenuItem>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
                 </DropdownMenuGroup>
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger className="data-[state=open]:text-white">
-                    My Resume
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
-                    <DropdownMenuSubContent className="crt flex px-0 flex-col bg-[#C0C0C0] border-[1px] border-solid border-b-black border-r-black border-t-white border-l-white rounded-none">
-                      <DropdownMenuItem
-                        onClick={() =>
-                          handleOpenDocument({
-                            title: "My Resume",
-                            documentPath: "./englishCV.pdf",
-                            documentType: "pdf",
-                            folderName: "My Resume",
-                            icon: "/icons/file.png",
-                          })
-                        }
-                      >
-                        English
-                        <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => handleOpen(25)}>
-                        Portuguese
-                        <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuPortal>
-                </DropdownMenuSub>
+                <DropdownMenuItem onClick={() => handleOpen(19)}>
+                  Settings
+                  <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
 
                 <DropdownMenuItem>
-                  <Link
-                    href="https://github.com/AlexandreDresch"
-                    target="_blank"
-                  >
+                  <Link href="https://github.com/FishLeAdit" target="_blank">
                     GitHub
                   </Link>
 
@@ -213,7 +144,7 @@ export default function Dock() {
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Link
-                    href="https://www.linkedin.com/in/alexandre-dresch/"
+                    href="https://www.linkedin.com/in/jawad-adit-chowdhury-b24b53239"
                     target="_blank"
                   >
                     LinkedIn
@@ -227,10 +158,9 @@ export default function Dock() {
 
           <Separator
             orientation="vertical"
-            className="mx-1 bg-[#808080] w-[2px] border-white border-r-[1px] h-6 monitor1-only"
+            className="mx-1 bg-[#808080] w-[2px] border-white border-r-[1px] h-6"
           />
         </>
-      )}
 
       <div className="w-full">
         <DockList />

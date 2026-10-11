@@ -119,7 +119,8 @@ Free Supabase projects pause after ~7 days with no API traffic. Two guards:
 9. **Me:** remove `@supabase/ssr` (installed but never imported).
 10. Verify: the Projects folder lists the 3 rows from Supabase in `npm run dev`.
 
-### Phase 2: Strip the bloat
+### Phase 2: Strip the bloat ✅
+**Outcome (changed from the table below at your request):** kept Display Properties with the **Background** (wallpapers) and **Appearance** (color themes) tabs, and the taskbar clock, calendar and volume. Removed the Screen Saver tab (`three`) and the Effects tab (dual monitor). Removed the Control Panel folder: its other items (Date/Time, Keyboard, Mouse, System) were never implemented. Start → Settings and desktop right-click → Properties open Display Properties directly. `gsap` stays (desktop watermark), `date-fns` stays (calendar peer dependency). The production build passes, and `/` is fully static.
 Remove each item with all its references: `constants/index.ts` (`programs`, `folders`, `allMobileApps`), `window-content-router.tsx`, Redux slices, dock/start-menu entries, mobile app list.
 
 | Remove | Notes |

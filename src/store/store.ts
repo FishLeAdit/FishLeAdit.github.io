@@ -9,7 +9,6 @@ import { footerMessageReducer } from "./footer-message-slice";
 import { projectsReducer } from "./projects-slice";
 import { foldersReducer } from "./folders-slice";
 import { windowManagerReducer } from "./window-manager-slice";
-import { clippyReducer } from "./clippy-slice";
 import { loadSettings, settingsReducer } from "./settings-slice";
 import { imageViewerReducer } from "./image-viewer-slice";
 import { documentViewerReducer } from "./document-viewer-slice";
@@ -26,7 +25,6 @@ export const store = configureStore({
     projects: projectsReducer,
     folders: foldersReducer,
     windows: windowManagerReducer,
-    clippy: clippyReducer,
     settings: settingsReducer,
     imageViewer: imageViewerReducer,
     documentViewer: documentViewerReducer,

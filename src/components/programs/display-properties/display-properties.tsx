@@ -13,10 +13,7 @@ import {
 } from "@/store/settings-slice";
 import { WallpaperMode } from "@/types";
 import { closeWindow } from "@/store/window-manager-slice";
-import ScreenSaver from "./screen-saver/screen-saver";
 import Appearance from "./appearance";
-import Effects from "./effects";
-import { useMonitor } from "@/hooks/use-monitor";
 
 const wallpapers = [
   { name: "(None)", color: "#008080" },
@@ -29,14 +26,7 @@ const wallpapers = [
   { name: "Brown Tiger", image: "/wallpaper/tiger.jpg" },
 ];
 
-const tabs = [
-  "Background",
-  "Screen Saver",
-  "Appearance",
-  "Effects",
-  "Web",
-  "Settings",
-];
+const tabs = ["Background", "Appearance"];
 
 export function DisplayProperties() {
   const [activeTab, setActiveTab] = useState("Background");
@@ -46,9 +36,6 @@ export function DisplayProperties() {
   const dispatch = useAppDispatch();
 
   const { draft, applied } = useAppSelector((state) => state.settings);
-
-  const { sendToMonitor2 } = useMonitor();
-  sendToMonitor2({ windowId: 19, title: "Display Properties" });
 
   useEffect(() => {
     const index = wallpapers.findIndex(
@@ -79,7 +66,7 @@ export function DisplayProperties() {
       title="Display Properties"
       icon="/icons/display.png"
       controls={{ close: true, minimize: false, maximize: false }}
-      className={`!w-[420px] ${activeTab === "Screen Saver" ? "!h-[660px]" : activeTab === "Appearance" ? "!h-[450px]" : "h-auto"} `}
+      className={`!w-[420px] ${activeTab === "Appearance" ? "!h-[450px]" : "h-auto"} `}
     >
       <div className="px-2 pt-2">
         <div className="flex">
@@ -114,16 +101,7 @@ export function DisplayProperties() {
           />
         )}
 
-        {activeTab === "Screen Saver" && <ScreenSaver />}
-
         {activeTab === "Appearance" && <Appearance />}
-
-        {activeTab === "Effects" && <Effects />}
-
-        {activeTab !== "Background" &&
-          activeTab !== "Screen Saver" &&
-          activeTab !== "Appearance" &&
-          activeTab !== "Effects" && <p>Not implemented</p>}
 
         <div className="py-2 flex justify-end gap-1">
           <Win98Button

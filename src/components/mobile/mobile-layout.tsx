@@ -30,13 +30,9 @@ export default function MobileLayout() {
 
   const isDrawerOpen = showAllApps || showRecentApps;
 
-  const byName = (name: string) => folders.find((f) => f.name === name)!;
-
-  const mainFolders = ["Recycle Bin", "My Computer", "Backend", "Projects"];
-
-  const utilities = ["Mobile", "Contact me"];
-
-  const documents = ["My Resume", "98.portfolio"];
+  const mainFolders = folders.filter((f) =>
+    ["Projects", "Contact me"].includes(f.name)
+  );
 
   const { dockItems } = useAppSelector((state) => state.windows);
 
@@ -102,41 +98,13 @@ export default function MobileLayout() {
           <ClockWidget />
 
           <div className="grid grid-cols-2 gap-2 col-span-2 md:col-span-3">
-            {mainFolders.map((name) => {
-              const folder = byName(name);
-              return (
-                <AppIcon
-                  key={folder.id}
-                  item={folder}
-                  onClick={handleFolderClick}
-                />
-              );
-            })}
-            {utilities.map((name) => {
-              const folder = byName(name);
-              return (
-                <AppIcon
-                  key={folder.id}
-                  item={folder}
-                  onClick={handleFolderClick}
-                />
-              );
-            })}
-            <AppIcon item={byName("Games")} onClick={handleFolderClick} />
-
-            <div className="grid grid-cols-2 gap-2">
-              {documents.map((name) => {
-                const doc = byName(name);
-                return (
-                  <AppIcon
-                    key={doc.id}
-                    item={doc}
-                    small
-                    onClick={handleFolderClick}
-                  />
-                );
-              })}
-            </div>
+            {mainFolders.map((folder) => (
+              <AppIcon
+                key={folder.id}
+                item={folder}
+                onClick={handleFolderClick}
+              />
+            ))}
           </div>
 
           <div className="col-span-2 md:col-span-full">

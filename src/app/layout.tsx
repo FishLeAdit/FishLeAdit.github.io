@@ -5,7 +5,6 @@ import "./globals.css";
 import ReduxProvider from "@/store/redux-provider";
 import SoundManager from "@/components/shared/sound-manager";
 import { ThemeProvider } from "@/themes/theme-provider";
-import Monitor2Init from "@/components/desktop/monitor-two-init";
 
 const titillium = Titillium_Web({
   subsets: ["latin"],
@@ -44,7 +43,6 @@ export default function RootLayout({
           >
             <SoundManager />
             {children}
-            <Monitor2Init />
           </body>
         </html>
       </ThemeProvider>

@@ -60,18 +60,3 @@ export function generateBootSequence() {
 
   return result;
 }
-
-export function toGithub1sUrl(
-  githubUrl: string,
-  { branch = "main", path = "src" }: { branch?: string; path?: string } = {},
-): string {
-  const base = githubUrl
-    .replace(/^https?:\/\/github\.com/i, "https://github1s.com")
-    .replace(/\/+$/, "");
-
-  const cleanPath = path.replace(/^\/+|\/+$/g, "");
-
-  return cleanPath
-    ? `${base}/tree/${branch}/${cleanPath}`
-    : `${base}/tree/${branch}`;
-}

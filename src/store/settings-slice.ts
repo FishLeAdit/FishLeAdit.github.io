@@ -5,12 +5,6 @@ export type WallpaperMode = "fill" | "tile" | "center" | "stretch";
 export type Language = "en" | "pt" | "es" | "fr";
 export type TimeFormat = "12h" | "24h";
 
-export interface ScreenSaverSettings {
-  type: number;
-  waitMinutes: number;
-  passwordProtected: boolean;
-}
-
 export interface Theme {
   desktop: string;
   window: string;
@@ -25,7 +19,6 @@ export interface Theme {
 export interface CoreSettings {
   wallpaper: string;
   wallpaperMode: WallpaperMode;
-  screenSaver: ScreenSaverSettings;
   theme: Theme;
 }
 
@@ -41,11 +34,6 @@ export interface SettingsState {
 const defaultCore: CoreSettings = {
   wallpaper: "/wallpaper/default.jpg",
   wallpaperMode: "tile",
-  screenSaver: {
-    type: 0,
-    waitMinutes: 14,
-    passwordProtected: false,
-  },
   theme: themes["Windows Standard"],
 };
 
@@ -98,18 +86,6 @@ const settingsSlice = createSlice({
       state.draft.wallpaperMode = action.payload;
     },
 
-    setScreenSaverType(state, action: PayloadAction<number>) {
-      state.draft.screenSaver.type = action.payload;
-    },
-
-    setScreenSaverWait(state, action: PayloadAction<number>) {
-      state.draft.screenSaver.waitMinutes = action.payload;
-    },
-
-    setScreenSaverPassword(state, action: PayloadAction<boolean>) {
-      state.draft.screenSaver.passwordProtected = action.payload;
-    },
-
     applySettings(state) {
       state.applied = clone(state.draft);
     },
@@ -139,9 +115,6 @@ const settingsSlice = createSlice({
 export const {
   setWallpaper,
   setWallpaperMode,
-  setScreenSaverType,
-  setScreenSaverWait,
-  setScreenSaverPassword,
   applySettings,
   resetSettings,
   setLanguage,

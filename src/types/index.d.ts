@@ -162,8 +162,6 @@ export interface SettingsState {
   language: Language;
   timeFormat: TimeFormat;
   overrideDateTime: string | null;
-
-  screenSaver: ScreenSaverSettings;
 }
 
 export type WindowWrapperProps = {
@@ -181,9 +179,3 @@ export type WindowWrapperProps = {
   };
   crtEffect?: boolean;
 };
-
-export interface ScreenSaverSettings {
-  type: number;
-  waitMinutes: number;
-  passwordProtected: boolean;
-}

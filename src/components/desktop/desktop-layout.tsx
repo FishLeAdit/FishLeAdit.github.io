@@ -8,8 +8,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import BootTerminal from "./boot-terminal";
 import { useWindowsSound } from "../shared/sound-manager";
 import { useAppSelector } from "@/store/store";
-import { ScreensaverManager } from "../programs/display-properties/screen-saver/screen-saver-manager";
-import { useMonitor } from "@/hooks/use-monitor";
 
 export default function DesktopLayout() {
   const [showStartScreen, setShowStartScreen] = useState(true);
@@ -18,7 +16,6 @@ export default function DesktopLayout() {
   const [triggerAnimation, setTriggerAnimation] = useState(false);
 
   const { playSound } = useWindowsSound();
-  const { isMonitor2 } = useMonitor();
 
   const { wallpaper, wallpaperMode } = useAppSelector(
     (state) => state.settings.applied,
@@ -53,7 +50,7 @@ export default function DesktopLayout() {
   return (
     <div className="bg-black">
       <AnimatePresence>
-        {showStartScreen && !isMonitor2 && (
+        {showStartScreen && (
           <motion.div
             key="start-screen"
             initial={{ scale: 1 }}
@@ -66,7 +63,7 @@ export default function DesktopLayout() {
           </motion.div>
         )}
 
-        {showTerminal && !isMonitor2 && (
+        {showTerminal && (
           <motion.div
             key="terminal"
             initial={{ opacity: 0 }}
@@ -78,7 +75,7 @@ export default function DesktopLayout() {
           </motion.div>
         )}
 
-        {(showDesktop || isMonitor2) && (
+        {showDesktop && (
           <motion.main
             key="desktop"
             initial={{ opacity: 0 }}
@@ -105,7 +102,6 @@ export default function DesktopLayout() {
           >
             <div className="flex-1 min-h-0 relative overflow-hidden">
               <Desktop />
-              <ScreensaverManager />
             </div>
             <Dock />
           </motion.main>
