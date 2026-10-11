@@ -14,6 +14,8 @@ import {
 } from "../ui/dropdown-menu";
 import Checkmark from "../shared/checkmark";
 import { FooterMessages } from "@/constants";
+import { openWindow } from "@/store/window-manager-slice";
+import { ABOUT_WINDOW_ID } from "../programs/about-dialog";
 
 export default function FolderNavigationMenu() {
   const dispatch = useAppDispatch();
@@ -731,8 +733,9 @@ export default function FolderNavigationMenu() {
                 className="menu-button"
                 onMouseEnter={(event) => handleSetMessage(event)}
                 onMouseLeave={() => dispatch(setFooterMessage(""))}
+                onClick={() => dispatch(openWindow(ABOUT_WINDOW_ID))}
               >
-                About 98.portfolio
+                About
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </div>

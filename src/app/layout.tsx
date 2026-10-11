@@ -25,7 +25,7 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  title: "Jawad Adit Chowdhury | 98.portfolio",
+  title: "Jawad Adit Chowdhury | Portfolio",
   description:
     "Portfolio of Jawad Adit Chowdhury, full-stack and ML developer, built as a Windows 98 desktop.",
 };

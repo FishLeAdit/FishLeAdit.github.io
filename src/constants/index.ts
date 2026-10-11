@@ -11,6 +11,22 @@ export const OWNER = {
   linkedin: "https://www.linkedin.com/in/jawad-adit-chowdhury-b24b53239",
 };
 
+// Initials in the "ANSI Shadow" style the boot screens use.
+export const LOGO_ASCII = `
+     ██╗ █████╗  ██████╗
+     ██║██╔══██╗██╔════╝
+     ██║███████║██║
+██   ██║██╔══██║██║
+╚█████╔╝██║  ██║╚██████╗
+ ╚════╝ ╚═╝  ╚═╝ ╚═════╝`;
+
+export const TEMPLATE = {
+  name: "98.portfolio",
+  author: "Alexandre Dresch",
+  repo: "https://github.com/AlexandreDresch/98.portfolio",
+  authorGithub: "https://github.com/AlexandreDresch",
+};
+
 export const RESUME = {
   title: "My Resume",
   documentPath: "/Jawad_Adit_Chowdhury_CV.pdf",
@@ -276,8 +292,8 @@ export const FooterMessages = [
     message: "Opens Help.",
   },
   {
-    name: "About98.portfolio",
-    message: "Opens the 98.portfolio document.",
+    name: "About",
+    message: "Shows who made the original desktop template.",
   },
 ];
 
@@ -343,6 +359,15 @@ export const programs = [
     isMinimized: false,
     image: "/icons/file.png",
     description: "View and read documents in various formats.",
+  },
+  {
+    id: 30,
+    name: "About",
+    isOpen: false,
+    isMaximized: false,
+    isMinimized: false,
+    image: "/icons/help-book.png",
+    description: "Credits for the desktop template this portfolio is built on.",
   },
 ];
 
@@ -446,6 +471,6 @@ export const folderNavigationMenuItems = {
   ],
   help: [
     { label: "Help Topics", disabled: true },
-    { label: "About 98.portfolio" },
+    { label: "About", opensWindow: 30 },
   ],
 };

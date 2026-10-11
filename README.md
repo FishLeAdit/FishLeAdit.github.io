@@ -1,4 +1,4 @@
-# Jawad Adit Chowdhury: 98.portfolio
+# Jawad Adit Chowdhury: Portfolio
 
 My portfolio, built as a Windows 98 desktop. Boot it up, open the **Projects** folder, read my resume, or get in touch through **Contact me**.
 

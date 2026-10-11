@@ -6,13 +6,13 @@ import ProjectContainer from "../folder/project-container";
 import ContactContainer from "../folder/contact-container";
 import { Folder } from "@/types";
 import DesktopContextMenu from "./desktop-context-menu";
-import WelcomeMessage from "./welcome-message";
 import { DisplayProperties } from "../programs/display-properties/display-properties";
 import InternetExplorer from "../programs/IE/internet-explorer";
 import ImageViewer from "../programs/image-viewer/image-viewer";
 import DocumentViewer from "../programs/document-viewer/document-viewer";
 import DocumentViewerShortcut from "../programs/document-viewer/document-viewer-shortcut";
 import { RESUME } from "@/constants";
+import AboutDialog from "../programs/about-dialog";
 
 export default function Desktop() {
   const { projects } = useAppSelector((state) => state.projects);
@@ -33,8 +33,6 @@ export default function Desktop() {
           ))}
 
           <DocumentViewerShortcut id={25} {...RESUME} />
-
-          <WelcomeMessage />
         </div>
 
         <DisplayProperties />
@@ -44,6 +42,8 @@ export default function Desktop() {
         <ImageViewer />
 
         <DocumentViewer />
+
+        <AboutDialog />
       </>
     </DesktopContextMenu>
   );

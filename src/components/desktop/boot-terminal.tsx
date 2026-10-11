@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { generateBootSequence } from "@/lib/utils";
+import { LOGO_ASCII } from "@/constants";
 
 interface BootTerminalProps {
   onBootComplete: () => void;
@@ -68,16 +69,7 @@ export default function BootTerminal({ onBootComplete }: BootTerminalProps) {
     >
       <div className="flex flex-col">
         <div className="mb-4">
-          <pre className="text-white">
-            {` 
- █████╗  █████╗ 
-██╔══██╗██╔══██╗
-╚██████║╚█████╔╝
- ╚═══██║██╔══██╗
- █████╔╝╚█████╔╝
- ╚════╝  ╚════╝ .portfolio
-      `}
-          </pre>
+          <pre className="text-white">{LOGO_ASCII}</pre>
         </div>
 
         {messages.map((message, index) => {

@@ -93,8 +93,8 @@ export default function Dock() {
               align="start"
             >
               <div className="w-5 h-full bg-gradient-to-b mt-0 from-[#1084d0] to-[#010f80] flex items-end">
-                <h1 className="-rotate-90 text-white w-full font-semibold">
-                  98.portfolio
+                <h1 className="-rotate-90 text-white w-full whitespace-nowrap">
+                  <span className="font-bold">Windows</span>98
                 </h1>
               </div>
               <div className="w-full pr-2">

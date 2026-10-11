@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { useEffect } from "react";
 import { Toast } from "../ui/toast";
-import { OWNER } from "@/constants";
+import { LOGO_ASCII, OWNER } from "@/constants";
 
 export default function StartScreen() {
   const { toast, showToast } = useToast();
@@ -48,8 +48,8 @@ export default function StartScreen() {
           />
 
           <div>
-            <h1>Welcome to 98.portfolio</h1>
-            <h3>Built with NextJs</h3>
+            <h1>Welcome to my portfolio</h1>
+            <h3>Built with Next.js</h3>
           </div>
         </div>
 
@@ -60,7 +60,7 @@ export default function StartScreen() {
           </div>
 
           <div className="w-[260.8px]">
-            <p>:98.portfolio</p>
+            <p>:portfolio.exe</p>
             <p>:{OWNER.name}</p>
           </div>
         </div>
@@ -81,16 +81,7 @@ export default function StartScreen() {
       </div>
 
       <div className="w-full flex justify-end">
-        <pre>
-          {` 
- █████╗  █████╗ 
-██╔══██╗██╔══██╗
-╚██████║╚█████╔╝
- ╚═══██║██╔══██╗
- █████╔╝╚█████╔╝
- ╚════╝  ╚════╝ .portfolio
-      `}
-        </pre>
+        <pre>{LOGO_ASCII}</pre>
       </div>
 
       <div className="absolute bottom-20 left-20">

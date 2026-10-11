@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { generateBootSequence } from "@/lib/utils";
 import { playSound } from "../shared/sound-manager";
+import { LOGO_ASCII } from "@/constants";
 
 interface BootAnimationProps {
   onComplete: () => void;
@@ -134,16 +135,7 @@ export default function BootAnimation({ onComplete }: BootAnimationProps) {
           ease: "linear",
         }}
       >
-        <pre className="text-white text-center">
-          {` 
- █████╗  █████╗ 
-██╔══██╗██╔══██╗
-╚██████║╚█████╔╝
- ╚═══██║██╔══██╗
- █████╔╝╚█████╔╝
- ╚════╝  ╚════╝ 
-`}
-        </pre>
+        <pre className="text-white">{LOGO_ASCII}</pre>
       </motion.div>
 
       <div className="w-3/4 max-w-xl text-green-500 text-sm mb-6">

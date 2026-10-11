@@ -23,8 +23,8 @@ export const bootMessages = [
   "Initializing registry...",
   "Loading user profile...",
   "Initializing graphical interface...",
-  "Loading 98.portfolio...",
-  "Welcome to 98.portfolio!",
+  "Loading portfolio...",
+  "Welcome!",
 ];
 
 export const errorMessages = [

@@ -111,6 +111,8 @@ export interface MenuItemProps {
   label: string;
   disabled?: boolean;
   shortcut?: string;
+  // Window id to open when the item is clicked (most items only set footer text).
+  opensWindow?: number;
   handleSetMessage: (event: React.MouseEvent) => void;
 }
 
