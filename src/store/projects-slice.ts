@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Project } from "@/types";
-import { supabase } from "@/lib/services/supabase/client";
+import { getSupabase } from "@/lib/services/supabase/client";
 
 interface ErrorDetail {
   message: string;
@@ -8,17 +8,13 @@ interface ErrorDetail {
 }
 
 interface ProjectsState {
-  frontend: Project[];
-  backend: Project[];
-  mobile: Project[];
+  projects: Project[];
   status: "initial" | "pending" | "fulfilled" | "rejected";
   error: ErrorDetail | null;
 }
 
 const initialState: ProjectsState = {
-  frontend: [],
-  backend: [],
-  mobile: [],
+  projects: [],
   status: "initial",
   error: null,
 };
@@ -26,32 +22,45 @@ const initialState: ProjectsState = {
 export const getProjectsData = createAsyncThunk<
   Project[],
   void,
-  { rejectValue: ErrorDetail }
->("projects/getProjectsData", async (_, { rejectWithValue }) => {
-  try {
-    const { data: projects, error } = await supabase.from("Project").select();
+  { rejectValue: ErrorDetail; state: { projects: ProjectsState } }
+>(
+  "projects/getProjectsData",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data: projects, error } = await getSupabase()
+        .from("Project")
+        .select()
+        .order("date", { ascending: false });
 
-    if (error) {
+      if (error) {
+        return rejectWithValue({
+          message: error.message,
+          code: +error.code,
+        });
+      }
+
+      if (!projects) {
+        return rejectWithValue({
+          message: "No projects found",
+        });
+      }
+
+      return projects as Project[];
+    } catch (error: any) {
       return rejectWithValue({
         message: error.message,
-        code: +error.code,
+        code: error.response?.status,
       });
     }
-
-    if (!projects) {
-      return rejectWithValue({
-        message: "No projects found",
-      });
-    }
-
-    return projects as Project[];
-  } catch (error: any) {
-    return rejectWithValue({
-      message: error.message,
-      code: error.response?.status,
-    });
+  },
+  {
+    // Desktop dock and mobile windows both dispatch this; only fetch once.
+    condition: (_, { getState }) => {
+      const { status } = getState().projects;
+      return status === "initial" || status === "rejected";
+    },
   }
-});
+);
 
 const projectsSlice = createSlice({
   name: "projects",
@@ -67,15 +76,7 @@ const projectsSlice = createSlice({
         getProjectsData.fulfilled,
         (state, action: PayloadAction<Project[]>) => {
           state.status = "fulfilled";
-          action.payload.forEach((project) => {
-            if (project.type === "FRONTEND") {
-              state.frontend.push(project);
-            } else if (project.type === "BACKEND") {
-              state.backend.push(project);
-            } else if (project.type === "MOBILE") {
-              state.mobile.push(project);
-            }
-          });
+          state.projects = action.payload;
         }
       )
 

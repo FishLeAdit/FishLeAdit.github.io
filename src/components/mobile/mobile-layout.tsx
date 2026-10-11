@@ -32,7 +32,7 @@ export default function MobileLayout() {
 
   const byName = (name: string) => folders.find((f) => f.name === name)!;
 
-  const mainFolders = ["Recycle Bin", "My Computer", "Backend", "Frontend"];
+  const mainFolders = ["Recycle Bin", "My Computer", "Backend", "Projects"];
 
   const utilities = ["Mobile", "Contact me"];
 

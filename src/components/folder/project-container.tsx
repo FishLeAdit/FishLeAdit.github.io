@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, toGithub1sUrl } from "@/lib/utils";
+import { cn, getProjectIcon, toGithub1sUrl } from "@/lib/utils";
 import { openFile, selectFile } from "@/store/folders-slice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import type { Project, ProjectContainerProps } from "@/types";
@@ -74,10 +74,12 @@ export default function ProjectContainer({ projects }: ProjectContainerProps) {
             </Link>
           )}
 
-          <VSCode
-            renderTrigger={true}
-            projectLink={toGithub1sUrl(selectedFile.github_url)}
-          />
+          {selectedFile.github_url && (
+            <VSCode
+              renderTrigger={true}
+              projectLink={toGithub1sUrl(selectedFile.github_url)}
+            />
+          )}
 
           {selectedFile.images &&
             selectedFile.images.map((image, index) => (
@@ -99,13 +101,7 @@ export default function ProjectContainer({ projects }: ProjectContainerProps) {
               onDoubleClick={handleOpenProject}
             >
               <Image
-                src={
-                  project.type === "FRONTEND"
-                    ? "/icons/frontend-icon.png"
-                    : project.type === "BACKEND"
-                      ? "/icons/backend-icon.png"
-                      : "/icons/mobile-icon.png"
-                }
+                src={getProjectIcon(project.type)}
                 alt={project.name}
                 width={40}
                 height={40}

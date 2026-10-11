@@ -8,6 +8,7 @@ import {
   maximizeWindow,
 } from "@/store/window-manager-slice";
 import { FolderHeaderProps } from "@/types";
+import { getProjectIcon } from "@/lib/utils";
 
 export default function FolderHeader({ folder }: FolderHeaderProps) {
   const dispatch = useAppDispatch();
@@ -42,9 +43,7 @@ export default function FolderHeader({ folder }: FolderHeaderProps) {
             alt={selectedFile && isFileOpen ? selectedFile.name : folder.name}
             src={
               selectedFile && isFileOpen
-                ? selectedFile.type === "BACKEND"
-                  ? "/icons/backend-icon.png"
-                  : "/icons/frontend-icon.png"
+                ? getProjectIcon(selectedFile.type)
                 : folder.image
             }
             className="w-4 h-4"

@@ -2,7 +2,7 @@ import { useAppSelector } from "@/store/store";
 import Image from "next/image";
 import React from "react";
 import { Separator } from "../ui/separator";
-import { cn } from "@/lib/utils";
+import { cn, getProjectIcon } from "@/lib/utils";
 import TooltipLink from "../shared/tooltip-link";
 import { FolderContentLeftProps } from "@/types";
 
@@ -17,14 +17,7 @@ export default function FolderContentLeft({ folder }: FolderContentLeftProps) {
 
   const getImageSrc = () => {
     if (selectedFile) {
-      switch (selectedFile.type) {
-        case "BACKEND":
-          return "/icons/backend-icon.png";
-        case "FRONTEND":
-          return "/icons/frontend-icon.png";
-        default:
-          return folder.image;
-      }
+      return getProjectIcon(selectedFile.type);
     }
     return selectedProgram ? selectedProgram.image : folder.image;
   };
@@ -70,11 +63,13 @@ export default function FolderContentLeft({ folder }: FolderContentLeftProps) {
             selectedFile.deployment_url === null && "justify-start pl-3"
           )}
         >
-          <TooltipLink
-            image="/github.svg"
-            link={selectedFile.github_url}
-            tooltip="Source Code"
-          />
+          {selectedFile.github_url && (
+            <TooltipLink
+              image="/github.svg"
+              link={selectedFile.github_url}
+              tooltip="Source Code"
+            />
+          )}
 
           {selectedFile.deployment_url !== null && (
             <TooltipLink

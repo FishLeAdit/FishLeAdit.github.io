@@ -7,9 +7,10 @@ export interface Project {
   done: boolean;
   images: string[];
   deployment_url: string | null;
-  github_url: string;
+  github_url: string | null;
   date: string;
-  type: "BACKEND" | "FRONTEND";
+  type: "WEB" | "RESEARCH";
+  writeup: string | null;
 }
 
 type ProjectStatus = "initial" | "pending" | "fulfilled" | "rejected";

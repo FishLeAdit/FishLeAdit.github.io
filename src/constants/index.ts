@@ -279,7 +279,7 @@ export const folders: Folder[] = [
   },
   {
     id: 4,
-    name: "Frontend",
+    name: "Projects",
     isOpen: false,
     isMaximized: false,
     isMinimized: false,

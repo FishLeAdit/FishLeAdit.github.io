@@ -11,9 +11,7 @@ export default function WindowContentRouter({
 }: {
   window: WindowItem;
 }) {
-  const { frontend, backend } = useAppSelector(
-    (state) => state.projects
-  );
+  const { projects } = useAppSelector((state) => state.projects);
 
   if (window.type === "program") {
     return <ProgramsContainer programs={[window]} />;
@@ -21,12 +19,8 @@ export default function WindowContentRouter({
 
   const folder = window as Folder;
 
-  if (folder.name === "Backend") {
-    return <ProjectContainer projects={backend} />;
-  }
-
-  if (folder.name === "Frontend") {
-    return <ProjectContainer projects={frontend} />;
+  if (folder.name === "Projects") {
+    return <ProjectContainer projects={projects} />;
   }
 
   return <NotAvailable message="Not available yet." />;
