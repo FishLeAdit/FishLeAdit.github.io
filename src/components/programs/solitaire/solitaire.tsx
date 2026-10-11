@@ -1,7 +1,7 @@
 "use client";
 
 import WindowWrapper from "@/components/shared/window-wrapper";
-import SolitaireGame from "./solitaire-game";
+import { SolitaireGame } from "../lazy";
 
 export const SOLITAIRE_WINDOW_ID = 31;
 

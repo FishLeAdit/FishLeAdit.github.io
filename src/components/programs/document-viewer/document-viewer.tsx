@@ -7,8 +7,7 @@ import { Separator } from "../../ui/separator";
 import WindowWrapper from "@/components/shared/window-wrapper";
 import FolderNavigationMenu from "@/components/folder/folder-navigation-menu";
 import FolderFooterMessage from "@/components/folder/folder-footer-message";
-import PdfViewer from "./pdf-viewer";
-import MarkdownViewer from "./markdown-viewer";
+import { MarkdownViewer, PdfViewer } from "../lazy";
 import { useAppSelector } from "@/store/store";
 
 // PDFs live on this site; markdown documents are GitHub READMEs ("/owner/repo").

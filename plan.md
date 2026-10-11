@@ -177,7 +177,13 @@ The template already does this. `use-is-desktop.ts` switches at **1024px** betwe
 - **M9. Resize and rotate.** `useIsDesktop` listens for changes, so layouts swap on rotate or resize. Verify that state survives.
 - **M10. First paint.** `page.tsx` returns `null` until the media query runs, and a static export's HTML would be empty. Show the boot or splash screen instead of a white page.
 
-### Phase 6: QA
+### Phase 6: QA ✅
+**Outcome:** lint, types and `next build` are clean, and every flow was re-tested against the **production** server (`next start`), not just dev. Desktop, 360/390/768 phones, 1024 tablet, rotation, sounds, wallpapers, Solitaire, CV and README all pass with no console errors.
+- **Build hang fixed:** `next/font/google` hung while downloading fonts. Titillium Web is now self-hosted (`src/app/fonts`, OFL), and unused Inter/Jost are removed. The build takes ~30 s and needs no network.
+- **Bundle:** PDF.js, Markdown and Solitaire load on demand, cutting first-load JS from 474 kB to **328 kB**.
+- **Wallpapers:** the template photos were resized from up to 6000 px to 1920 px, taking `public/wallpaper` from 12 MB to 2.7 MB.
+- **Supabase failure:** blocking Supabase now shows "Unable to reach the project server" with Retry (plus the tray error icon), with a 15 s request timeout, and Retry recovers.
+- **Dependencies:** Next 14.0.4 → 14.2.35 plus non-breaking `npm audit fix` (react-pdf 7.7.3, supabase-js). The remaining advisories are Next server features unused by a static export (fixes only in Next 15/16), PDF.js (mitigated: react-pdf forces `isEvalSupported: false`), and build-time tooling.
 22. `npm run lint` and `npm run build` with zero errors.
 23. Manual pass at all M8 widths (a real phone if possible): boot, both sounds, open/close/minimize/maximize, every project file (README, live, GitHub, images, write-up), the CV, Contact me.
 24. **Failure test:** wrong anon key, then confirm the Projects folder shows the error dialog and nothing else breaks.

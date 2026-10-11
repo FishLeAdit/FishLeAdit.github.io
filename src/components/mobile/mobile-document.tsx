@@ -2,8 +2,7 @@
 
 import { useAppSelector } from "@/store/store";
 import { Win98Button } from "@/components/shared/win-98-button";
-import PdfViewer from "../programs/document-viewer/pdf-viewer";
-import MarkdownViewer from "../programs/document-viewer/markdown-viewer";
+import { MarkdownViewer, PdfViewer } from "../programs/lazy";
 import { documentHref } from "../programs/document-viewer/document-viewer";
 
 // Phone version of the Document Viewer: no menus, just the document and

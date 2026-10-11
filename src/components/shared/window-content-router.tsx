@@ -5,7 +5,7 @@ import ProjectContainer from "../folder/project-container";
 import ContactContainer from "../folder/contact-container";
 import MobileDocument from "../mobile/mobile-document";
 import ImageSlider from "../programs/image-viewer/image-slider";
-import SolitaireGame from "../programs/solitaire/solitaire-game";
+import { SolitaireGame } from "../programs/lazy";
 import { useAppSelector } from "@/store/store";
 import NotAvailable from "./not-available";
 

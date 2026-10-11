@@ -30,7 +30,9 @@ export const getProjectsData = createAsyncThunk<
       const { data: projects, error } = await getSupabase()
         .from("Project")
         .select()
-        .order("date", { ascending: false });
+        .order("date", { ascending: false })
+        // Don't hang on "Loading..." forever if the server never answers.
+        .abortSignal(AbortSignal.timeout(15000));
 
       if (error) {
         return rejectWithValue({

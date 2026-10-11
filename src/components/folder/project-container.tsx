@@ -12,10 +12,13 @@ import { openDocument } from "@/store/document-viewer-slice";
 import { openWindow } from "@/store/window-manager-slice";
 import { openUrl } from "@/store/browser-slice";
 import { WRITEUPS } from "@/constants";
+import { getProjectsData } from "@/store/projects-slice";
+import { Win98Button } from "../shared/win-98-button";
 
 export default function ProjectContainer({ projects }: ProjectContainerProps) {
   const dispatch = useAppDispatch();
   const { selectedFile, isFileOpen } = useAppSelector((state) => state.folders);
+  const projectsStatus = useAppSelector((state) => state.projects.status);
 
   const handleSelectProject = (project: Project) => {
     dispatch(selectFile(project));
@@ -58,6 +61,41 @@ export default function ProjectContainer({ projects }: ProjectContainerProps) {
     dispatch(openUrl(path));
     dispatch(openWindow(10));
   };
+
+  // Projects come from Supabase; a free-tier project can be paused or slow
+  // to wake, so say so instead of showing an empty folder.
+  if (projects.length === 0 && projectsStatus !== "fulfilled") {
+    const failed = projectsStatus === "rejected";
+    return (
+      <div className="size-full flex items-center justify-center p-4">
+        <div className="flex max-w-sm gap-3 items-start text-sm">
+          <Image
+            src={failed ? "/error.png" : "/hourglass-loading.gif"}
+            alt=""
+            width={32}
+            height={32}
+            className="w-8 h-8 shrink-0 object-contain"
+          />
+          <div className="space-y-3">
+            <p className="font-semibold">
+              {failed ? "Unable to reach the project server." : "Loading projects..."}
+            </p>
+            {failed && (
+              <>
+                <p>
+                  The database may be waking up after a quiet spell. Give it a
+                  few seconds and try again.
+                </p>
+                <Win98Button onClick={() => dispatch(getProjectsData())}>
+                  Retry
+                </Win98Button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="size-full min-w-0 flex flex-col">
