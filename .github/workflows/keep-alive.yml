@@ -1,0 +1,30 @@
+name: Keep Supabase awake
+
+# Free Supabase projects pause after about a week without requests, which
+# would leave the Projects folder empty. A small read every 3 days prevents it.
+# Note: GitHub disables scheduled workflows after 60 days without commits
+# (it e-mails first); re-enable it from the Actions tab.
+
+on:
+  schedule:
+    - cron: "0 9 */3 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read one project row
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_API_KEY }}
+          SUPABASE_KEY: ${{ secrets.NEXT_PUBLIC_ANON_KEY }}
+        run: |
+          status=$(curl -s -o /dev/null -w "%{http_code}" \
+            "$SUPABASE_URL/rest/v1/Project?select=id&limit=1" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+          echo "Supabase responded with HTTP $status"
+          test "$status" = "200"

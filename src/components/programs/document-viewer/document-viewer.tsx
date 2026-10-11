@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { Button } from "../../ui/button";
 import { Separator } from "../../ui/separator";
 import WindowWrapper from "@/components/shared/window-wrapper";
@@ -43,8 +42,13 @@ export default function DocumentViewer() {
           />
 
           <div className="flex items-center gap-1">
+            {/* Plain link: next/link would try to prefetch the PDF as a page. */}
             {documentPath && (
-              <Link href={documentHref(documentPath, documentType)} target="_blank">
+              <a
+                href={documentHref(documentPath, documentType)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Button
                   variant="ghost"
                   className="flex h-max w-20 flex-col rounded-none border border-transparent px-1 py-0 hover:border-black hover:border-l-white hover:border-t-white"
@@ -58,7 +62,7 @@ export default function DocumentViewer() {
                   />
                   <span className="text-xs">Download</span>
                 </Button>
-              </Link>
+              </a>
             )}
 
             {documentPath && (
