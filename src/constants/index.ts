@@ -369,6 +369,15 @@ export const programs = [
     image: "/icons/help-book.png",
     description: "Credits for the desktop template this portfolio is built on.",
   },
+  {
+    id: 31,
+    name: "Solitaire",
+    isOpen: false,
+    isMaximized: false,
+    isMinimized: false,
+    image: "/icons/solitaire.svg",
+    description: "Klondike Solitaire, just like Windows 98.",
+  },
 ];
 
 export const folderNavigationMenuItems = {

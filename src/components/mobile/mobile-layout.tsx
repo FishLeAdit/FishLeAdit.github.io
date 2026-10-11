@@ -34,6 +34,18 @@ const resumeItem: Folder = {
   documentPath: RESUME.documentPath,
 };
 
+const solitaireItem: Folder = {
+  id: 31,
+  name: "Solitaire",
+  image: "/icons/solitaire.svg",
+  isOpen: false,
+  isMaximized: false,
+  isMinimized: false,
+  isDocument: false,
+  documentType: null,
+  documentPath: null,
+};
+
 export default function MobileLayout() {
   const [showBoot, setShowBoot] = useState(!bootState.done);
   const [showAllApps, setShowAllApps] = useState(false);
@@ -46,7 +58,7 @@ export default function MobileLayout() {
 
   const isDrawerOpen = showAllApps || showRecentApps;
 
-  const apps = [...folders, resumeItem];
+  const apps = [...folders, resumeItem, solitaireItem];
 
   const { dockItems } = useAppSelector((state) => state.windows);
   const { isFileOpen } = useAppSelector((state) => state.folders);
