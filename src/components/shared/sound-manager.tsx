@@ -1,133 +1,68 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import { useAppSelector } from "@/store/store";
 
-export type SoundType =
-  | "startup"
-  | "shutdown"
-  | "error"
-  | "ding"
-  | "notify"
-  | "recycle"
-  | "windowsLogon"
-  | "hardDrive";
+export type SoundType = "startup" | "click";
 
 const soundPaths: Record<SoundType, string> = {
   startup: "/soundtrack/windows-98-startup.mp3",
-  shutdown: "/soundtrack/windows-98-shutdown.mp3",
-  error: "/soundtrack/windows-98-error.mp3",
-  ding: "/soundtrack/windows-98-ding.mp3",
-  notify: "/soundtrack/windows-98-notify.mp3",
-  recycle: "/soundtrack/windows-98-recycle.mp3",
-  windowsLogon: "/soundtrack/windows-98-logon.mp3",
-  hardDrive: "/soundtrack/vintage-hard-drive.mp3",
+  click: "/soundtrack/click.wav",
 };
 
-export function useWindowsSound() {
-  const audioRefs = useRef<Record<SoundType, HTMLAudioElement | null>>({
-    startup: null,
-    shutdown: null,
-    error: null,
-    ding: null,
-    notify: null,
-    recycle: null,
-    windowsLogon: null,
-    hardDrive: null,
-  });
+// Anything that reads as a button gets a click sound.
+const CLICKABLE =
+  'button, a, select, [role="menuitem"], [role="tab"], [role="checkbox"], [role="option"], .cursor-pointer';
 
-  useEffect(() => {
-    Object.entries(soundPaths).forEach(([type, path]) => {
-      const soundType = type as SoundType;
-      audioRefs.current[soundType] = new Audio(path);
+// One shared element per sound, so every caller plays through the same
+// volume setting and the files are only fetched once.
+const audio: Partial<Record<SoundType, HTMLAudioElement>> = {};
+let volume = 0.5;
 
-      if (audioRefs.current[soundType]) {
-        audioRefs.current[soundType]!.load();
-      }
-    });
+function getAudio(type: SoundType) {
+  if (typeof window === "undefined") return null;
+  if (!audio[type]) {
+    audio[type] = new Audio(soundPaths[type]);
+    audio[type]!.preload = "auto";
+  }
+  return audio[type]!;
+}
 
-    const currentAudioRefs = { ...audioRefs.current };
+export function playSound(type: SoundType) {
+  if (volume === 0) return;
 
-    return () => {
-      Object.values(currentAudioRefs).forEach((audio) => {
-        if (audio) {
-          audio.pause();
-          audio.src = "";
-        }
-      });
-    };
-  }, []);
+  const el = getAudio(type);
+  if (!el) return;
 
-  const playSound = (soundType: SoundType) => {
-    const audio = audioRefs.current[soundType];
-    if (audio) {
-      audio.currentTime = 0;
-
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.log(`Audio playback was prevented: ${error}`);
-        });
-      }
-    }
-  };
-
-  const stopSound = (soundType: SoundType) => {
-    const audio = audioRefs.current[soundType];
-    if (audio) {
-      audio.pause();
-      audio.currentTime = 0;
-    }
-  };
-
-  return { playSound, stopSound };
+  el.volume = volume;
+  el.currentTime = 0;
+  // Browsers reject play() until the visitor has interacted with the page.
+  el.play().catch(() => {});
 }
 
 export default function SoundManager() {
-  const { playSound } = useWindowsSound();
+  const { volume: level, muted } = useAppSelector(
+    (state) => state.settings.sound,
+  );
 
   useEffect(() => {
-    const handleGlobalSoundEvent = (
-      e: CustomEvent<{ soundType: SoundType }>
-    ) => {
-      if (e.detail && e.detail.soundType) {
-        playSound(e.detail.soundType);
+    volume = muted ? 0 : level / 100;
+  }, [level, muted]);
+
+  useEffect(() => {
+    getAudio("startup");
+    getAudio("click");
+
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.button !== 0) return;
+      if ((e.target as Element | null)?.closest?.(CLICKABLE)) {
+        playSound("click");
       }
     };
 
-    window.addEventListener(
-      "play-windows-sound" as any,
-      handleGlobalSoundEvent
-    );
-
-    return () => {
-      window.removeEventListener(
-        "play-windows-sound" as any,
-        handleGlobalSoundEvent
-      );
-    };
-  }, [playSound]);
+    window.addEventListener("pointerdown", onPointerDown, true);
+    return () => window.removeEventListener("pointerdown", onPointerDown, true);
+  }, []);
 
   return null;
-}
-
-export function playWindowsSound(soundType: SoundType) {
-  const event = new CustomEvent("play-windows-sound", {
-    detail: { soundType },
-  });
-  window.dispatchEvent(event);
-}
-
-export function stopWindowsSound(soundType: SoundType) {
-  const event = new CustomEvent("stop-windows-sound", {
-    detail: { soundType },
-  });
-  window.dispatchEvent(event);
-
-  const audio = document.querySelector(
-    `audio[data-sound-type="${soundType}"]`
-  ) as HTMLAudioElement;
-  if (audio) {
-    audio.pause();
-    audio.currentTime = 0;
-  }
 }

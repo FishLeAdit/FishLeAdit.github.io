@@ -29,6 +29,13 @@ export interface SettingsState {
   language: Language;
   timeFormat: TimeFormat;
   overrideDateTime: string | null;
+
+  sound: SoundSettings;
+}
+
+export interface SoundSettings {
+  volume: number; // 0-100
+  muted: boolean;
 }
 
 const defaultCore: CoreSettings = {
@@ -44,6 +51,8 @@ const initialState: SettingsState = {
   language: "en",
   timeFormat: "24h",
   overrideDateTime: null,
+
+  sound: { volume: 50, muted: false },
 };
 
 export const loadSettings = (): SettingsState | undefined => {
@@ -109,6 +118,18 @@ const settingsSlice = createSlice({
     setTheme(state, action: PayloadAction<Theme>) {
       state.draft.theme = action.payload;
     },
+
+    setVolume(state, action: PayloadAction<number>) {
+      state.sound.volume = action.payload;
+      state.sound.muted = action.payload === 0;
+    },
+
+    setMuted(state, action: PayloadAction<boolean>) {
+      state.sound.muted = action.payload;
+      if (!action.payload && state.sound.volume === 0) {
+        state.sound.volume = 50;
+      }
+    },
   },
 });
 
@@ -121,6 +142,8 @@ export const {
   setTimeFormat,
   setOverrideDateTime,
   setTheme,
+  setVolume,
+  setMuted,
 } = settingsSlice.actions;
 
 export const settingsReducer = settingsSlice.reducer;

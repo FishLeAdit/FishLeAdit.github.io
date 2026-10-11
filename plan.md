@@ -143,7 +143,8 @@ Remove each item with all its references: `constants/index.ts` (`programs`, `fol
 
 Packages to remove: `three`, `@types/three`, `gsap`, `@gsap/react`, `youtube-player`, `@types/youtube-player`, `react-day-picker` and `date-fns` (if the clock doesn't use them), `axios` (if unused). Run `npm run build` after removing to catch dangling imports.
 
-### Phase 3: Sound
+### Phase 3: Sound ✅
+**Outcome:** two sounds only. The startup chime plays after boot (pressing Enter counts as the user gesture browsers require). A synthesized 3 KB `click.wav` plays on any button, menu item, tab or icon. The tray volume slider and Mute box now control both sounds and persist in localStorage (before, they were purely cosmetic). The hard-drive boot noise and the six missing-file sound entries are gone.
 11. Reduce `sound-manager.tsx` to two sounds: `startup` and `click`.
 12. `windows-98-startup.mp3` exists. **There is no click sound in the repo.** The other files `sound-manager` references (shutdown, error, ding, etc.) are missing too. Add a short royalty-free `click.mp3` and play it on icon, taskbar and window-button clicks.
 13. Delete `vintage-hard-drive.mp3` and the unused sound entries.

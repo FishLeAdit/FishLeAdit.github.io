@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { generateBootSequence } from "@/lib/utils";
-import { useWindowsSound } from "../shared/sound-manager";
 
 interface BootTerminalProps {
   onBootComplete: () => void;
@@ -16,19 +15,8 @@ export default function BootTerminal({ onBootComplete }: BootTerminalProps) {
   const [bootMessages, setBootMessages] = useState<string[]>([]);
   const terminalRef = useRef<HTMLDivElement>(null);
 
-  const { playSound, stopSound } = useWindowsSound();
-
   useEffect(() => {
     setBootMessages(generateBootSequence());
-  }, []);
-
-  useEffect(() => {
-    playSound("hardDrive");
-
-    return () => {
-      stopSound("hardDrive");
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

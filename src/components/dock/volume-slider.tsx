@@ -1,30 +1,20 @@
-import { useState } from "react";
 import { Card } from "../ui/card";
 import { Slider } from "../ui/slider";
 import { Checkbox } from "../ui/checkbox";
 import Image from "next/image";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setMuted, setVolume } from "@/store/settings-slice";
 
 export default function VolumeSlider() {
-  const [volume, setVolume] = useState(50);
-  const [muted, setMuted] = useState(false);
+  const dispatch = useAppDispatch();
+  const { volume, muted } = useAppSelector((state) => state.settings.sound);
 
   const handleVolumeChange = (value: number[]) => {
-    const newVolume = value[0];
-    setVolume(newVolume);
-    if (muted && newVolume > 0) {
-      setMuted(false);
-    } else if (newVolume === 0) {
-      setMuted(true);
-    }
+    dispatch(setVolume(value[0]));
   };
 
   const toggleMute = () => {
-    setMuted(!muted);
-    if (!muted) {
-      setVolume(0);
-    } else {
-      setVolume(50);
-    }
+    dispatch(setMuted(!muted));
   };
 
   return (

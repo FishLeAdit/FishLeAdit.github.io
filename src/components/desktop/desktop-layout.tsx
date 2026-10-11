@@ -6,7 +6,7 @@ import Desktop from "./desktop";
 import Dock from "../dock/dock";
 import { AnimatePresence, motion } from "framer-motion";
 import BootTerminal from "./boot-terminal";
-import { useWindowsSound } from "../shared/sound-manager";
+import { playSound } from "../shared/sound-manager";
 import { useAppSelector } from "@/store/store";
 
 export default function DesktopLayout() {
@@ -15,7 +15,6 @@ export default function DesktopLayout() {
   const [showDesktop, setShowDesktop] = useState(false);
   const [triggerAnimation, setTriggerAnimation] = useState(false);
 
-  const { playSound } = useWindowsSound();
 
   const { wallpaper, wallpaperMode } = useAppSelector(
     (state) => state.settings.applied,
