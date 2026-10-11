@@ -2,20 +2,23 @@ name: Keep Supabase awake
 
 # Free Supabase projects pause after about a week without requests, which
 # would leave the Projects folder empty. A small read every 3 days prevents it.
-# Note: GitHub disables scheduled workflows after 60 days without commits
-# (it e-mails first); re-enable it from the Actions tab.
+#
+# GitHub also disables scheduled workflows after 60 days without repository
+# activity, which would silently stop the pings. Once a month this workflow
+# pushes an empty commit to a separate `keepalive` branch to count as activity.
+# It never touches main, so it does not redeploy the site.
 
 on:
   schedule:
-    - cron: "0 9 */3 * *"
+    - cron: "0 9 */3 * *" # ping Supabase
+    - cron: "0 9 1 * *" # monthly repository activity
   workflow_dispatch:
-
-permissions:
-  contents: read
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Read one project row
         env:
@@ -28,3 +31,19 @@ jobs:
             -H "Authorization: Bearer $SUPABASE_KEY")
           echo "Supabase responded with HTTP $status"
           test "$status" = "200"
+
+  stay-enabled:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 9 1 * *'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Push an empty commit to the keepalive branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B keepalive
+          git commit --allow-empty -m "Keep scheduled workflows enabled ($(date -u +%F))"
+          git push --force origin keepalive
