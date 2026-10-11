@@ -4,7 +4,7 @@ import { Win98Button } from "@/components/shared/win-98-button";
 
 type Wallpaper =
   | { name: string; color: string }
-  | { name: string; image: string };
+  | { name: string; image: string; mode?: string };
 
 export default function Background({
   wallpapers,
@@ -44,8 +44,10 @@ export default function Background({
               <div
                 key={wp.name}
                 onClick={() => {
+                  const mode = ("mode" in wp && wp.mode) || displayMode;
                   setSelectedWallpaper(index);
-                  onChange(index, displayMode);
+                  setDisplayMode(mode);
+                  onChange(index, mode);
                 }}
                 className={`px-1 py-[2px] flex items-center gap-1 cursor-pointer ${
                   selectedWallpaper === index

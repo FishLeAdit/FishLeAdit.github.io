@@ -27,9 +27,10 @@ export default function BootTerminal({ onBootComplete }: BootTerminalProps) {
       const message = bootMessages[currentIndex];
       const isError = message.includes("ERROR") || message.includes("WARNING");
 
+      // About 4 seconds in total; errors linger a little longer to be read.
       const delay = isError
-        ? Math.random() * 500 + 800
-        : Math.random() * 300 + 300;
+        ? Math.random() * 200 + 300
+        : Math.random() * 100 + 100;
 
       const timer = setTimeout(() => {
         setMessages((prev) => [...prev, bootMessages[currentIndex]]);
@@ -44,7 +45,7 @@ export default function BootTerminal({ onBootComplete }: BootTerminalProps) {
     } else {
       const finalTimer = setTimeout(() => {
         onBootComplete();
-      }, 1500);
+      }, 600);
 
       return () => clearTimeout(finalTimer);
     }

@@ -24,6 +24,11 @@ const wallpapers = [
   { name: "Mountains", image: "/wallpaper/mountains.jpg" },
   { name: "Sunflowers", image: "/wallpaper/sunflowers.jpg" },
   { name: "Brown Tiger", image: "/wallpaper/tiger.jpg" },
+  // Full scenes, so they switch the display mode to Fill when picked.
+  { name: "Vapor: Sunset Grid", image: "/wallpaper/sunset-grid.jpg", mode: "Fill" },
+  { name: "Vapor: Palm Dusk", image: "/wallpaper/palm-dusk.jpg", mode: "Fill" },
+  { name: "Vapor: Neon Peaks", image: "/wallpaper/neon-peaks.jpg", mode: "Fill" },
+  { name: "Vapor: Aesthetic", image: "/wallpaper/aesthetic.jpg", mode: "Fill" },
 ];
 
 const tabs = ["Background", "Appearance"];
