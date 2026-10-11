@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import HourglassLoading from "../../shared/hourglass-loading";
-import { ScrollArea } from "../../ui/scroll-area";
 import { fetchReadme } from "@/lib/services/README-api";
 import "github-markdown-css/github-markdown-light.css";
 
@@ -38,11 +37,13 @@ export default function MarkdownViewer({
       <HourglassLoading className="w-full h-full flex justify-center items-center" />
     );
   }
+  // A plain scroller: Radix ScrollArea's table-layout viewport lets one wide
+  // code block stretch the whole README past the window edge.
   return (
-    <ScrollArea className="w-full h-full px-3 pt-2">
+    <div className="w-full h-full overflow-auto px-3 pt-2">
       <Markdown className="markdown-body" remarkPlugins={[remarkGfm]}>
         {content}
       </Markdown>
-    </ScrollArea>
+    </div>
   );
 }

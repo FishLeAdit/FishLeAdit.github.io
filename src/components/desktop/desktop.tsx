@@ -3,7 +3,7 @@
 import Shortcut from "../dock/shortcut";
 import { useAppSelector } from "@/store/store";
 import ProjectContainer from "../folder/project-container";
-import NotAvailable from "../shared/not-available";
+import ContactContainer from "../folder/contact-container";
 import { Folder } from "@/types";
 import DesktopContextMenu from "./desktop-context-menu";
 import WelcomeMessage from "./welcome-message";
@@ -12,6 +12,7 @@ import InternetExplorer from "../programs/IE/internet-explorer";
 import ImageViewer from "../programs/image-viewer/image-viewer";
 import DocumentViewer from "../programs/document-viewer/document-viewer";
 import DocumentViewerShortcut from "../programs/document-viewer/document-viewer-shortcut";
+import { RESUME } from "@/constants";
 
 export default function Desktop() {
   const { projects } = useAppSelector((state) => state.projects);
@@ -27,20 +28,11 @@ export default function Desktop() {
               {folder.name === "Projects" && (
                 <ProjectContainer projects={projects} />
               )}
-              {folder.name === "Contact me" && (
-                <NotAvailable message="Not available yet." />
-              )}
+              {folder.name === "Contact me" && <ContactContainer />}
             </Shortcut>
           ))}
 
-          <DocumentViewerShortcut
-            id={25}
-            title="My Resume"
-            documentPath="./englishCV.pdf"
-            documentType="pdf"
-            folderName="My Resume"
-            icon="/icons/file.png"
-          />
+          <DocumentViewerShortcut id={25} {...RESUME} />
 
           <WelcomeMessage />
         </div>

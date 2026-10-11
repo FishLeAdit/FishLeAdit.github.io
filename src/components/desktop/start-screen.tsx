@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import { useEffect } from "react";
 import { Toast } from "../ui/toast";
+import { OWNER } from "@/constants";
 
 export default function StartScreen() {
   const { toast, showToast } = useToast();
@@ -60,7 +61,7 @@ export default function StartScreen() {
 
           <div className="w-[260.8px]">
             <p>:98.portfolio</p>
-            <p>:Alexandre Dresch</p>
+            <p>:{OWNER.name}</p>
           </div>
         </div>
 
@@ -72,9 +73,9 @@ export default function StartScreen() {
           </div>
 
           <div>
-            <p>:Fullstack Developer</p>
-            <p>:React, Node, PostgreSQL</p>
-            <p>:Portuguese, English</p>
+            <p>:{OWNER.role}</p>
+            <p>:{OWNER.stacks}</p>
+            <p>:{OWNER.languages}</p>
           </div>
         </div>
       </div>

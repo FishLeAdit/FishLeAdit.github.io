@@ -1,5 +1,32 @@
 import { Folder } from "@/types";
 
+export const OWNER = {
+  name: "Jawad Adit Chowdhury",
+  role: "Full-stack & ML Developer",
+  stacks: "React, Node, MongoDB, PyTorch",
+  languages: "English, Bengali, French",
+  email: "jawadadit05@gmail.com",
+  phone: "+8801535848853",
+  github: "https://github.com/FishLeAdit",
+  linkedin: "https://www.linkedin.com/in/jawad-adit-chowdhury-b24b53239",
+};
+
+export const RESUME = {
+  title: "My Resume",
+  documentPath: "/Jawad_Adit_Chowdhury_CV.pdf",
+  documentType: "pdf" as const,
+  folderName: "My Resume",
+  icon: "/icons/notepad.png",
+};
+
+// Static 90s-style write-up pages in /public, keyed by Project.writeup.
+export const WRITEUPS: Record<string, { title: string; path: string }> = {
+  "brain-tumor": {
+    title: "HSRD: Pediatric Brain Tumor Segmentation",
+    path: "/brain-tumor/index.html",
+  },
+};
+
 export const FooterMessages = [
   {
     name: "Folder",
@@ -258,6 +285,8 @@ export const folders: Folder[] = [
   {
     id: 4,
     name: "Projects",
+    description:
+      "Things I have built. Double-click a project to open it: README, live site, source code and write-ups.",
     isOpen: false,
     isMaximized: false,
     isMinimized: false,
@@ -269,6 +298,7 @@ export const folders: Folder[] = [
   {
     id: 8,
     name: "Contact me",
+    description: "E-mail, phone, GitHub and LinkedIn. My inbox is always open.",
     isOpen: false,
     isMaximized: false,
     isMinimized: false,

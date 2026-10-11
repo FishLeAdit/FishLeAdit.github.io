@@ -1,5 +1,8 @@
+// documentPath is "owner/repo". HEAD resolves to the repo's default branch,
+// so this works whether it's called main or master.
 export async function fetchReadme(documentPath: string) {
-  const BASE_URL = `https://raw.githubusercontent.com/${documentPath}/main/README.md`;
+  const repo = documentPath.replace(/^\/+|\/+$/g, "");
+  const BASE_URL = `https://raw.githubusercontent.com/${repo}/HEAD/README.md`;
 
   const response = await fetch(BASE_URL, {
     method: "GET",

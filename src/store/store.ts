@@ -12,6 +12,7 @@ import { windowManagerReducer } from "./window-manager-slice";
 import { loadSettings, settingsReducer } from "./settings-slice";
 import { imageViewerReducer } from "./image-viewer-slice";
 import { documentViewerReducer } from "./document-viewer-slice";
+import { browserReducer } from "./browser-slice";
 
 const loadedSettings = loadSettings();
 
@@ -28,6 +29,7 @@ export const store = configureStore({
     settings: settingsReducer,
     imageViewer: imageViewerReducer,
     documentViewer: documentViewerReducer,
+    browser: browserReducer,
   },
   preloadedState,
   middleware: (getDefaultMiddleware) =>

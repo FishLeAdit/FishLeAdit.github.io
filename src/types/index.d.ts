@@ -48,6 +48,7 @@ export interface Folder {
   documentType: "pdf" | "markdown" | null;
   isProgram?: boolean;
   documentPath: string | null;
+  description?: string;
 }
 
 export interface FolderProps {

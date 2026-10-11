@@ -29,6 +29,7 @@ import Link from "next/link";
 import DockList from "./dock-list";
 import { openWindow } from "@/store/window-manager-slice";
 import { openDocument } from "@/store/document-viewer-slice";
+import { OWNER, RESUME } from "@/constants";
 import { DocumentViewerShortcutProps } from "../programs/document-viewer/document-viewer-shortcut";
 
 export default function Dock() {
@@ -97,7 +98,7 @@ export default function Dock() {
                 </h1>
               </div>
               <div className="w-full pr-2">
-                <DropdownMenuLabel>Jawad Adit Chowdhury</DropdownMenuLabel>
+                <DropdownMenuLabel>{OWNER.name}</DropdownMenuLabel>
 
                 <DropdownMenuSeparator />
 
@@ -106,17 +107,7 @@ export default function Dock() {
                     Projects
                     <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() =>
-                      handleOpenDocument({
-                        title: "My Resume",
-                        documentPath: "./englishCV.pdf",
-                        documentType: "pdf",
-                        folderName: "My Resume",
-                        icon: "/icons/file.png",
-                      })
-                    }
-                  >
+                  <DropdownMenuItem onClick={() => handleOpenDocument(RESUME)}>
                     My Resume
                     <DropdownMenuShortcut>⌘R</DropdownMenuShortcut>
                   </DropdownMenuItem>
@@ -136,17 +127,14 @@ export default function Dock() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem>
-                  <Link href="https://github.com/FishLeAdit" target="_blank">
+                  <Link href={OWNER.github} target="_blank">
                     GitHub
                   </Link>
 
                   <DropdownMenuShortcut>⌘G</DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link
-                    href="https://www.linkedin.com/in/jawad-adit-chowdhury-b24b53239"
-                    target="_blank"
-                  >
+                  <Link href={OWNER.linkedin} target="_blank">
                     LinkedIn
                   </Link>
 

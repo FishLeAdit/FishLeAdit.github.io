@@ -150,7 +150,8 @@ Packages to remove: `three`, `@types/three`, `gsap`, `@gsap/react`, `youtube-pla
 13. Delete `vintage-hard-drive.mp3` and the unused sound entries.
 14. Browsers block autoplay. Play the startup sound on the first user interaction (a "click to start" step on the boot screen), never before.
 
-### Phase 4: Build the new content
+### Phase 4: Build the new content ✅
+**Outcome:** the write-up is a static 90s-style HTML page at `public/brain-tumor/index.html`, not a React component. It opens inside the IE window (via a new `browser-slice`), opens directly in a new tab on phones, and works as a shareable standalone link. Content is plain-language and five-fold results only (Chapter 5/6), with 4 thesis figures, team and supervisor credits, and no full PDF. Contact me lists e-mail, phone, GitHub, LinkedIn and Download CV. The owner's details live in `OWNER` / `RESUME` in `src/constants`. README.md files open from GitHub via the `HEAD` branch. Also fixed: README text overflowing the Document Viewer.
 15. Folders in `constants/index.ts`: `Projects`, `My Resume`, `Contact me`.
 16. `window-content-router.tsx`: route `Projects` to `ProjectContainer` with the single list from the slice.
 17. `project-container.tsx`: project icon by `type` (WEB → `frontend-icon.png` or similar, RESEARCH → a book/document icon). Add the `Write-up.htm` file when `writeup` is set. Hide the GitHub and README files when `github_url` is null.

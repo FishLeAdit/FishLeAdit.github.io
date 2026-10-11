@@ -6,6 +6,9 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import IENavigationMenu from "./ie-navigation-menu";
 import IEInternalNavigation from "./ie-internal-navigation";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { clearPendingUrl } from "@/store/browser-slice";
+import { WRITEUPS } from "@/constants";
 
 interface HistoryEntry {
   url: string;
@@ -30,6 +33,7 @@ interface Tab {
 let TAB_ID_COUNTER = 1;
 
 const DEFAULT_FAVORITES: Favorite[] = [
+  ...Object.values(WRITEUPS).map((w) => ({ label: w.title, url: w.path })),
   {
     label: "MSN.com",
     url: "https://web.archive.org/web/19991128100812/http://www.msn.com/",
@@ -337,6 +341,8 @@ export default function InternetExplorer() {
   const normalizeUrl = (raw: string): string => {
     const t = raw.trim();
     if (!t) return "";
+    // Pages hosted on this site, e.g. /brain-tumor/index.html
+    if (t.startsWith("/")) return `${window.location.origin}${t}`;
     if (!t.includes(".") && !t.startsWith("http"))
       return `https://www2.bing.com/search?q=${encodeURIComponent(t)}`;
     if (!/^https?:\/\//i.test(t)) return `https://${t}`;
@@ -371,6 +377,15 @@ export default function InternetExplorer() {
     (url: string) => navigateTab(activeTabId, url),
     [activeTabId, navigateTab],
   );
+
+  const dispatch = useAppDispatch();
+  const pendingUrl = useAppSelector((state) => state.browser.pendingUrl);
+
+  useEffect(() => {
+    if (!pendingUrl) return;
+    navigateTab(activeTabId, pendingUrl);
+    dispatch(clearPendingUrl());
+  }, [pendingUrl, activeTabId, navigateTab, dispatch]);
 
   const openNewTab = useCallback((url?: string) => {
     const tab = makeTab(

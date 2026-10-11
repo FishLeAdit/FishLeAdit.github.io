@@ -1,6 +1,7 @@
 import { useGSAP } from "@gsap/react";
 import React, { useRef, RefObject } from "react";
 import gsap from "gsap";
+import { OWNER } from "@/constants";
 
 type FontWeightConfig = {
   min: number;
@@ -105,7 +106,7 @@ export default function WelcomeMessage(): JSX.Element {
 
       <p ref={subtitleRef}>
         {renderText(
-          "by Alexandre Dresch",
+          `by ${OWNER.name}`,
           "text-3xl font-inter text-right",
           100,
         )}

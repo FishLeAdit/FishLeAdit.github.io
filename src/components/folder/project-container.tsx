@@ -7,6 +7,11 @@ import type { Project, ProjectContainerProps } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import ImageShortcut from "../programs/image-viewer/image-shortcut";
+import { useIsDesktop } from "@/hooks/use-is-desktop";
+import { openDocument } from "@/store/document-viewer-slice";
+import { openWindow } from "@/store/window-manager-slice";
+import { openUrl } from "@/store/browser-slice";
+import { WRITEUPS } from "@/constants";
 
 export default function ProjectContainer({ projects }: ProjectContainerProps) {
   const dispatch = useAppDispatch();
@@ -20,20 +25,77 @@ export default function ProjectContainer({ projects }: ProjectContainerProps) {
     dispatch(openFile());
   };
 
+  const isDesktop = useIsDesktop();
+
+  // Files open on double-click like the rest of the desktop, but on a
+  // single tap on phones.
+  const openOn = (open: () => void) =>
+    isDesktop ? { onDoubleClick: open } : { onClick: open };
+
+  const handleOpenReadme = (project: Project) => {
+    const repo = new URL(project.github_url!).pathname;
+    dispatch(
+      openDocument({
+        documentPath: repo,
+        documentType: "markdown",
+        title: `${project.name} - README.md`,
+        folderName: project.name,
+        icon: "/icons/notepad.png",
+      }),
+    );
+    dispatch(openWindow(25));
+  };
+
+  const handleOpenWriteup = (key: string) => {
+    const { path } = WRITEUPS[key];
+
+    // Phones have no IE window; the page is plain HTML, so open it directly.
+    if (!isDesktop) {
+      window.open(path, "_blank", "noopener");
+      return;
+    }
+
+    dispatch(openUrl(path));
+    dispatch(openWindow(10));
+  };
+
   return (
     <div className="size-full min-w-0 flex">
       {isFileOpen && selectedFile ? (
         <div className="grid w-full h-fit grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4 p-4">
-          <div className="flex flex-col items-center cursor-pointer gap-1">
-            <Image
-              src="/icons/notepad.png"
-              alt="Project Image"
-              width={38}
-              height={38}
-            />
+          {selectedFile.github_url && (
+            <button
+              type="button"
+              {...openOn(() => handleOpenReadme(selectedFile))}
+              className="flex flex-col items-center cursor-pointer gap-1"
+            >
+              <Image
+                src="/icons/notepad.png"
+                alt="README"
+                width={38}
+                height={38}
+              />
 
-            <span className={cn("font-normal text-sm")}>README.md</span>
-          </div>
+              <span className={cn("font-normal text-sm")}>README.md</span>
+            </button>
+          )}
+
+          {selectedFile.writeup && WRITEUPS[selectedFile.writeup] && (
+            <button
+              type="button"
+              {...openOn(() => handleOpenWriteup(selectedFile.writeup!))}
+              className="flex flex-col items-center cursor-pointer gap-1"
+            >
+              <Image
+                src="/icons/internet-file.png"
+                alt="Write-up"
+                width={38}
+                height={38}
+              />
+
+              <span className={cn("font-normal text-sm")}>Write-up.htm</span>
+            </button>
+          )}
 
           {selectedFile.deployment_url && (
             <Link

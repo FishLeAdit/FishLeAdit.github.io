@@ -1,51 +1,55 @@
-# 📁 My Portfolio - Windows 98 Edition
+# Jawad Adit Chowdhury: 98.portfolio
 
-Welcome to my portfolio, designed to transport you back to the nostalgic days of Windows 98! 🖥️ This project showcases my skills, experience, and creativity in a retro-style environment that reflects my love for the classics.
+My portfolio, built as a Windows 98 desktop. Boot it up, open the **Projects** folder, read my resume, or get in touch through **Contact me**.
 
-## 🌟 Features
+## What's on the desktop
 
-- **Windows 98 UI**: Enjoy a fully interactive and authentic Windows 98 interface, complete with vintage icons, sounds, and animations.
-- **Projects**: Explore my work in a familiar environment, just like browsing through your old files. Click on folders, open programs, and discover what I’ve been up to.
-- **Interactive Desktop**: Move windows, minimize programs to the taskbar, and even experience those old-school tooltips.
-- **Retro Fun**: Play around with the simulation, and who knows? You might find some hidden Easter eggs!
+- **Projects**: loaded from a Supabase table. Each project opens as a folder with its README (pulled live from GitHub), the live site, the source code and any write-up.
+- **My Resume**: my CV in the built-in document viewer.
+- **Contact me**: e-mail, phone, GitHub and LinkedIn.
+- **HSRD write-up**: a 90s-style page about my thesis on pediatric brain tumor segmentation. It opens in the desktop's Internet Explorer and also stands alone at [`/brain-tumor/`](public/brain-tumor/index.html).
+- **Display Properties** (Start → Settings, or right-click the desktop): change the wallpaper and color scheme. Your choice is saved in the browser.
+- Startup chime and click sounds, controlled from the taskbar volume icon.
 
-## 🚀 Technologies Used
+## Tech
 
-- **Next.js (React)**: For building the interactive UI components.
-- **Redux**: Managing the state of programs and folders, just like managing your desktop.
-- **Framer Motion**: Adding smooth and delightful animations to enhance the Windows 98 experience.
-- **TypeScript**: Ensuring code quality and reliability.
-- **Tailwind CSS**: Crafting the pixel-perfect Windows 98 design.
+Next.js 14 (App Router, static export), React 18, TypeScript, Redux Toolkit, Tailwind CSS, Framer Motion, Supabase.
 
-## 🛠️ Installation
-
-**Clone the repository:**
+## Running it locally
 
 ```bash
-git clone https://github.com/AlexandreDresch/98.portfolio.git
-```
-
-**Install dependencies:**
-
-```bash
-cd 98.portfolio
 npm install
-```
-
-**Populate `.env` file based on `.env.EXAMPLE`**
-
-**Run the development server:**
-
-```bash
+cp .env.EXAMPLE .env.local   # then fill in your Supabase URL and publishable key
 npm run dev
 ```
 
-**Open your browser** and go to http://localhost:3000 to see the project in action!
+Open http://localhost:3000 and press **Enter** to boot.
 
-## 🌐 Live Demo
+## Supabase setup
 
-Check out the live version of my portfolio [here](https://98-portfolio-two.vercel.app).
+Create a free Supabase project and run this in the SQL Editor:
 
-## ✨ Inspiration
+```sql
+create table public."Project" (
+  id              bigint generated always as identity primary key,
+  name            text    not null,
+  description     text    not null,
+  done            boolean not null default true,
+  images          text[]  not null default '{}',
+  deployment_url  text,
+  github_url      text,
+  date            date    not null,
+  type            text    not null check (type in ('WEB', 'RESEARCH')),
+  writeup         text    -- key into WRITEUPS in src/constants, e.g. 'brain-tumor'
+);
 
-This portfolio is a tribute to the golden era of personal computing. The Windows 98 theme isn't just for fun—it's a reflection of how I approach my work: blending nostalgia with modern technology to create something truly unique.
+-- The publishable key ships in the public JS bundle; RLS keeps the table read-only.
+alter table public."Project" enable row level security;
+create policy "Public read" on public."Project" for select to anon using (true);
+```
+
+Add rows from the Table Editor. Changes show up on the site without a redeploy.
+
+## Credits
+
+Built on [98.portfolio](https://github.com/AlexandreDresch/98.portfolio) by **Alexandre Dresch**, trimmed down and adapted. The Windows 98 desktop, window manager and most of the UI are his work.

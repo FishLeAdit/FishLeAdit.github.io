@@ -25,8 +25,9 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  title: "98.portfolio",
-  description: "Alexandre Dresch's portfolio",
+  title: "Jawad Adit Chowdhury | 98.portfolio",
+  description:
+    "Portfolio of Jawad Adit Chowdhury, full-stack and ML developer, built as a Windows 98 desktop.",
 };
 
 export default function RootLayout({
