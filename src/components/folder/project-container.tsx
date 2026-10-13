@@ -5,7 +5,6 @@ import { openFile, selectFile } from "@/store/folders-slice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import type { Project, ProjectContainerProps } from "@/types";
 import Image from "next/image";
-import Link from "next/link";
 import ImageShortcut from "../programs/image-viewer/image-shortcut";
 import { useIsDesktop } from "@/hooks/use-is-desktop";
 import { openDocument } from "@/store/document-viewer-slice";
@@ -154,10 +153,13 @@ export default function ProjectContainer({ projects }: ProjectContainerProps) {
             </button>
           )}
 
+          {/* Plain links: next/link would prefetch same-origin URLs (like the
+              git-why site under this domain) as if they were portfolio pages. */}
           {selectedFile.deployment_url && (
-            <Link
+            <a
               href={selectedFile.deployment_url}
               target="_blank"
+              rel="noopener noreferrer"
               className="flex flex-col items-center cursor-pointer gap-1"
             >
               <Image
@@ -170,13 +172,14 @@ export default function ProjectContainer({ projects }: ProjectContainerProps) {
               <span className={cn("font-normal text-sm")}>
                 {PROJECT_LINK_LABELS[selectedFile.name] ?? selectedFile.name}
               </span>
-            </Link>
+            </a>
           )}
 
           {selectedFile.github_url && (
-            <Link
+            <a
               href={selectedFile.github_url}
               target="_blank"
+              rel="noopener noreferrer"
               className="flex flex-col items-center cursor-pointer gap-1"
             >
               <Image
@@ -189,7 +192,7 @@ export default function ProjectContainer({ projects }: ProjectContainerProps) {
               <span className={cn("font-normal text-sm")}>
                 {selectedFile.name}
               </span>
-            </Link>
+            </a>
           )}
 
           {selectedFile.images &&
