@@ -41,6 +41,11 @@ export const WRITEUPS: Record<string, { title: string; path: string }> = {
     title: "HSRD: Pediatric Brain Tumor Segmentation",
     path: "/brain-tumor/index.html",
   },
+  // Not "/git-why/": that path is the live git-why site (its own repository).
+  "git-why": {
+    title: "git-why: Ask Why a Repo Changed",
+    path: "/git-why-writeup/index.html",
+  },
 };
 
 export const FooterMessages = [

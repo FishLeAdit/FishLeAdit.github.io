@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>git-why: Ask Why a Repo Changed</title>
+<meta name="description" content="How git-why finds the pull requests, issues and commits behind a change, and writes cited answers with a small model on the visitor's own GPU, with no server.">
+<style>
+  /* Tiled starfield, the way every 1998 homepage did it. */
+  body {
+    margin: 0;
+    padding: 16px;
+    color: #000;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 17px;
+    line-height: 1.45;
+    background-color: #000033;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%23000033'/%3E%3Ccircle cx='8' cy='12' r='1' fill='%23ffffff'/%3E%3Ccircle cx='40' cy='6' r='0.7' fill='%23aaccff'/%3E%3Ccircle cx='52' cy='34' r='1.2' fill='%23ffffff'/%3E%3Ccircle cx='22' cy='44' r='0.6' fill='%23ffffaa'/%3E%3Ccircle cx='30' cy='26' r='0.5' fill='%23ffffff'/%3E%3Ccircle cx='60' cy='58' r='0.8' fill='%23aaccff'/%3E%3Ccircle cx='10' cy='56' r='0.9' fill='%23ffffff'/%3E%3C/svg%3E");
+  }
+  a { color: #0000ee; }
+  a:visited { color: #551a8b; }
+  a:hover { color: #ff0000; }
+
+  .page { max-width: 820px; margin: 0 auto; }
+
+  /* Raised silver panel with a sunken white body. */
+  .panel {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #404040 #404040 #ffffff;
+    padding: 4px;
+    margin-bottom: 14px;
+  }
+  .panel > .inner {
+    background: #ffffff;
+    border: 2px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding: 14px 18px;
+  }
+  .titlebar {
+    background: linear-gradient(to right, #000080, #1084d0);
+    color: #fff;
+    font-family: Tahoma, Verdana, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 3px 6px;
+    margin-bottom: 4px;
+  }
+
+  header { text-align: center; }
+  h1 {
+    margin: 4px 0;
+    font-size: 34px;
+    line-height: 1.15;
+    color: #cc0000;
+    text-shadow: 2px 2px 0 #ffcc00;
+  }
+  .subtitle { font-style: italic; color: #000080; margin: 0; }
+  h2 {
+    color: #000080;
+    font-size: 24px;
+    margin: 0 0 8px;
+    border-bottom: 3px double #000080;
+  }
+  h3 { color: #800000; margin: 14px 0 4px; }
+
+  .rainbow {
+    height: 6px;
+    border: 0;
+    margin: 12px 0;
+    background: linear-gradient(to right, red, orange, yellow, lime, cyan, blue, violet);
+  }
+
+  /* Marquee, done in CSS so it respects reduced motion and never widens the page. */
+  .marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    background: #000;
+    color: #00ff00;
+    font-family: "Courier New", Courier, monospace;
+    font-weight: bold;
+    padding: 4px 0;
+    border: 2px inset #808080;
+  }
+  .marquee span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll 22s linear infinite;
+  }
+  @keyframes scroll { to { transform: translateX(-100%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee span { animation: none; padding-left: 8px; }
+  }
+
+  .layout { display: flex; gap: 14px; align-items: flex-start; }
+  nav.panel { flex: 0 0 190px; position: sticky; top: 16px; }
+  nav ul { list-style: none; margin: 0; padding: 0; }
+  nav li { margin: 4px 0; }
+  nav li::before { content: "\25BA  "; color: #cc0000; font-size: 11px; }
+  main { flex: 1; min-width: 0; }
+
+  figure { margin: 14px 0; text-align: center; }
+  figure img {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    background: #fff;
+  }
+  figcaption { font-size: 14px; color: #333; margin-top: 4px; }
+
+  blockquote {
+    margin: 12px 0;
+    padding: 8px 12px;
+    background: #ffffcc;
+    border-left: 4px solid #cc9900;
+    font-style: italic;
+  }
+  blockquote cite { display: block; font-style: normal; font-size: 13px; color: #666; margin-top: 4px; }
+
+  .table-wrap { overflow-x: auto; }
+  table.results {
+    border-collapse: separate;
+    border-spacing: 2px;
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    width: 100%;
+    font-size: 15px;
+  }
+  table.results th { background: #000080; color: #fff; padding: 4px 8px; text-align: left; }
+  table.results td { background: #fff; padding: 4px 8px; border: 1px inset #c0c0c0; }
+  table.results td.num { text-align: center; font-family: "Courier New", monospace; white-space: nowrap; }
+  table.results td.win { background: #ccffcc; font-weight: bold; }
+
+  .new {
+    display: inline-block;
+    background: #ff0000;
+    color: #ffff00;
+    font: bold 11px Arial, sans-serif;
+    padding: 0 4px;
+    vertical-align: middle;
+    animation: blink 1.2s steps(1) infinite;
+  }
+  @keyframes blink { 50% { visibility: hidden; } }
+  @media (prefers-reduced-motion: reduce) { .new { animation: none; } }
+
+  .badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 10px; }
+  .badge {
+    color: #000;
+    font: bold 11px Verdana, sans-serif;
+    border: 2px outset #c0c0c0;
+    background: #c0c0c0;
+    padding: 3px 6px;
+  }
+  .counter {
+    font-family: "Courier New", monospace;
+    background: #000;
+    color: #ff3333;
+    letter-spacing: 3px;
+    padding: 2px 6px;
+    border: 2px inset #808080;
+  }
+  .construction {
+    display: inline-block;
+    padding: 4px 10px;
+    font: bold 12px Arial, sans-serif;
+    background: repeating-linear-gradient(45deg, #ffcc00 0 10px, #000 10px 20px);
+  }
+  .construction span { background: #ffcc00; color: #000; padding: 0 4px; }
+
+  footer { text-align: center; color: #ccccff; font-size: 14px; }
+  footer a { color: #ffff66; }
+
+  @media (max-width: 680px) {
+    body { padding: 8px; font-size: 16px; }
+    h1 { font-size: 26px; }
+    .layout { flex-direction: column; align-items: stretch; }
+    nav.panel { position: static; flex: none; }
+    nav ul { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+    .panel > .inner { padding: 12px; }
+  }
+  code { font-family: "Courier New", Courier, monospace; font-size: 15px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="panel">
+    <div class="titlebar">git-why Home Page</div>
+    <div class="inner">
+      <h1>git-why: Ask Why a Repo Changed</h1>
+      <p class="subtitle">Semantic search and cited answers over a project's history, running entirely in your browser. Personal project, October 2026</p>
+      <hr class="rainbow">
+      <div class="marquee" aria-hidden="true"><span>*** Welcome to the git-why home page! *** 2 repositories *** 4,692 PRs, issues &amp; commits *** search in under 10 ms *** answers written on your own GPU *** no server, no API key *** Thanks for visiting! ***</span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="panel" aria-label="Sections">
+      <div class="titlebar">Contents</div>
+      <div class="inner">
+        <ul>
+          <li><a href="#summary">What it does</a></li>
+          <li><a href="#problem">The problem</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#answers">Written answers</a></li>
+          <li><a href="#results">Results</a> <span class="new">NEW!</span></li>
+          <li><a href="#limits">Where it breaks</a></li>
+          <li><a href="#credits">Built with</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main>
+      <section class="panel" id="summary">
+        <div class="titlebar">What it does</div>
+        <div class="inner">
+          <p>Type a question like <i>"Why did nnU-Net stop saving checkpoints as pickle files?"</i> and git-why finds the pull requests, issues and commits that explain it, then (if you turn it on) writes a short answer that cites them. Every step runs in your browser: there is no server and no API key, and after the first visit it even works offline.</p>
+          <p><b>Try it:</b> <a href="https://fishleadit.github.io/git-why/" target="_blank" rel="noopener">fishleadit.github.io/git-why</a> &middot; <b>Source:</b> <a href="https://github.com/FishLeAdit/git-why" target="_blank" rel="noopener">github.com/FishLeAdit/git-why</a></p>
+          <p>It currently knows the history since 2022 of two open-source projects: <a href="https://github.com/MIC-DKFZ/nnUNet" target="_blank" rel="noopener">nnU-Net</a> (medical image segmentation; 2,600 records) and <a href="https://github.com/huggingface/transformers.js" target="_blank" rel="noopener">transformers.js</a> (machine learning in JavaScript; 2,092 records).</p>
+        </div>
+      </section>
+
+      <section class="panel" id="problem">
+        <div class="titlebar">The problem</div>
+        <div class="inner">
+          <h2>"Why is it like this?"</h2>
+          <p>The reasons behind a change rarely live in the code. They live in pull request descriptions, issue threads and review comments. <code>git log</code> and <code>git blame</code> tell you <i>what</i> changed and who did it; GitHub's search finds the words you type, not what you mean. Ask it "why did downloading the pretrained models break?" and you have to already know the words "HTTP/1.0" and "Zenodo".</p>
+        </div>
+      </section>
+
+      <section class="panel" id="how">
+        <div class="titlebar">How it works</div>
+        <div class="inner">
+          <h2>Build once, search in the browser</h2>
+          <figure>
+            <img src="overview.png" width="1924" height="1122" alt="Diagram: at build time, the GitHub API and a git clone feed fetch.mjs, then build-index.mjs, which writes the index files that GitHub Pages serves. At query time, the question is embedded in a browser worker, ranked by cosine similarity, and shown as linked result cards.">
+            <figcaption>Figure 1. Everything above the line runs once on my machine; everything below runs in the visitor's browser (numbers shown for the nnU-Net index).</figcaption>
+          </figure>
+          <h3>Build time</h3>
+          <p>A script reads the project's history: pull requests, issues and comments through the GitHub API, and commits from a local git clone (so they cost no API requests). It turns each change into one record: one per pull request, one per issue, and one per commit that belongs to neither. Commits are folded into the pull request or issue they belong to, using five rules, because nnU-Net's maintainers mostly merge locally and rarely write "#123" in commit messages. Noise such as "wip" commits and AI-bot replies is dropped.</p>
+          <p>Each record is turned into 384 numbers that describe its meaning (an <b>embedding</b>, from the small <code>bge-small-en-v1.5</code> model), and the result is committed as about 6 MB of static files per repository.</p>
+          <h3>In the browser</h3>
+          <p>Your question gets the same kind of embedding, from the same model running in a background thread, and is compared with every record. That is about a million multiplications and takes under 10 ms. The build and the browser share one embedding module, and I checked that they really agree: the same text gets near-identical vectors on both sides (cosine similarity 0.9976 or higher).</p>
+          <figure>
+            <img src="search.png" width="1100" height="860" alt="git-why in a Windows 98-style window: an address bar with the repository, a question box, filters, and a list of matching issues and pull requests with scores.">
+            <figcaption>Figure 2. Search results, styled as a Windows 98 window to match this desktop.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="panel" id="answers">
+        <div class="titlebar">Written answers</div>
+        <div class="inner">
+          <h2>A small model on your own GPU</h2>
+          <p>With one click, git-why downloads a 3-billion-parameter language model (Qwen2.5-3B, 1.7 GB, once) and runs it on your graphics card through WebGPU. It is given the four best records and told to answer only from them, citing each claim like <code>[pr-3011]</code>. Citations become links that jump to the record.</p>
+          <figure>
+            <img src="answer.png" width="1100" height="860" alt="An answer box: nnU-Net stopped saving checkpoints as pickle files because of a security vulnerability (CVE-2025-32434) that allowed remote code execution, citing pr-3011. The matching records are listed below.">
+            <figcaption>Figure 3. A cited answer. The model and the GPU it ran on are named under it.</figcaption>
+          </figure>
+          <h3>Keeping it honest</h3>
+          <ul>
+            <li><b>A gate.</b> If even the best record is not similar enough, the model is not asked at all; the page says the history doesn't clearly explain this. The cut-off was measured on real questions, not guessed.</li>
+            <li><b>A refusal rule.</b> If the records only mention the topic but never say why, the model must reply with one exact sentence: <i>"The history I searched doesn't explain this."</i></li>
+            <li><b>A citation check.</b> Any id the model cites that it was not given is struck through and flagged as made up; answers with no citations get a warning.</li>
+          </ul>
+          <figure>
+            <img src="gate.png" width="1100" height="860" alt="For the question 'Why did nnU-Net move from PyTorch to JAX?', the answer box says: The history I searched doesn't clearly explain this. The best match scores 0.73; written answers need 0.74 or more.">
+            <figcaption>Figure 4. A question the history cannot answer (nnU-Net never moved to JAX) is stopped before the model writes anything.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="panel" id="results">
+        <div class="titlebar">Results</div>
+        <div class="inner">
+          <h2>Measured, not eyeballed</h2>
+          <p>I wrote 31 test questions about nnU-Net from records that actually state a reason (23 the history answers, 8 it does not), and reviewed every question and its correct record by hand. <code>npm run eval</code> reproduces these numbers exactly.</p>
+          <h3>Does the right record come up?</h3>
+          <div class="table-wrap">
+            <table class="results">
+              <tr><th>Search method</th><th>Right record 1st</th><th>In top 5</th><th>In top 10</th></tr>
+              <tr><td>Meaning (embeddings) <i>(used by the site)</i></td><td class="num">52%</td><td class="num win">78%</td><td class="num">78%</td></tr>
+              <tr><td>Keywords (BM25)</td><td class="num">48%</td><td class="num">74%</td><td class="num win">83%</td></tr>
+              <tr><td>Both combined (rank fusion)</td><td class="num win">57%</td><td class="num">74%</td><td class="num">74%</td></tr>
+            </table>
+          </div>
+          <p>With 23 questions, one question is worth four points, so no method clearly wins. The interesting part is that they fail on <i>different</i> questions: keywords find records with distinctive words like "Dice", while embeddings find paraphrases ("smaller files" matching a pull request about "compression").</p>
+          <h3>Does it know when to say "I don't know"?</h3>
+          <p>The gate's cut-off, chosen on half the questions and tested on the other half, refused 3 of 4 unanswerable questions but also wrongly refused 3 of 11 answerable ones: the two groups' scores overlap, which is why the model's own refusal is the second line of defence.</p>
+          <p>For the written answers I compared two model sizes and several prompts on the same questions, running on my laptop's RTX 3050 (measured with a local test harness that is not yet part of the repository). The 1.5-billion-parameter model mostly refused or answered without citations, and invented reasons for questions the history doesn't cover. The 3-billion one, with the final prompt, gave a correctly cited answer for 11 of the 18 answerable questions whose source was among its four records, and, together with the gate, declined 7 of the 8 unanswerable ones <b>without inventing a reason for any of them</b>. A different prompt answered 14 of 18, but slipped one invented reason through; I chose honesty.</p>
+        </div>
+      </section>
+
+      <section class="panel" id="limits">
+        <div class="titlebar">Where it breaks</div>
+        <div class="inner">
+          <h2>What it doesn't fix</h2>
+          <ul>
+            <li><b>Some reasons were never written on GitHub.</b> Why nnU-Net added its residual-encoder (ResEnc) presets is explained in a paper, not in any pull request or issue, so git-why rightly can't answer it, but on-topic support threads still look like answers to the search.</li>
+            <li><b>Wording mismatches.</b> Asking about the "gradient scaler" misses the pull request that only says "GradScaler", for both search methods.</li>
+            <li><b>Busy topics drown quiet records.</b> Dozens of user threads about running out of GPU memory crowd out the one pull request that explains a misleading "Not enough VRAM" message.</li>
+            <li><b>It's still a small model.</b> It sometimes refuses questions it could answer, or pastes record text instead of explaining. The page flags pasted text and suspicious citations, but you should still read the records.</li>
+            <li><b>Hardware.</b> Answers need WebGPU (desktop Chrome or Edge) and a GPU with a few GB of memory. On laptops with two GPUs, Windows hands the browser the slower one unless you change a setting; the page detects this and says so. Search works everywhere.</li>
+            <li><b>A snapshot.</b> The index knows the history up to the day it was built.</li>
+          </ul>
+          <figure>
+            <img src="mobile.png" width="390" height="844" alt="git-why on a phone-sized screen, showing the same cited answer about pickle checkpoints.">
+            <figcaption>Figure 5. The same answer at phone width.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="panel" id="credits">
+        <div class="titlebar">Built with</div>
+        <div class="inner">
+          <h2>Built with</h2>
+          <p>TypeScript and Vite, no UI framework. <a href="https://github.com/huggingface/transformers.js" target="_blank" rel="noopener">transformers.js</a> runs the <code>bge-small-en-v1.5</code> embedding model; <a href="https://github.com/mlc-ai/web-llm" target="_blank" rel="noopener">WebLLM</a> runs Qwen2.5-3B-Instruct on WebGPU; MiniSearch provides the keyword search. Hosted on GitHub Pages, deployed by GitHub Actions; a service worker makes it work offline.</p>
+          <p>The Windows 98 look is hand-written CSS. The font is a pixel recreation of MS Sans Serif by "lou" (FontStruct, CC BY-SA 3.0, via 98.css); the cursors come from this desktop, which is based on <a href="https://github.com/AlexandreDresch/98.portfolio" target="_blank" rel="noopener">98.portfolio</a> by Alexandre Dresch.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <div class="badges">
+      <span class="badge">Best viewed in IE 5.0 at 800&times;600</span>
+      <span class="badge">Records indexed <span class="counter">004692</span></span>
+      <span class="construction"><span>Always under construction</span></span>
+    </div>
+    <p><a href="/" target="_top">&laquo; Back to Jawad's desktop</a> &middot; Last updated October 2026</p>
+  </footer>
+
+</div>
+</body>
+</html>
