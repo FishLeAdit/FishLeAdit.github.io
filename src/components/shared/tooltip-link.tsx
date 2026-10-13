@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   Tooltip,
   TooltipContent,
@@ -22,7 +21,8 @@ export default function TooltipLink({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Link href={link} target="_blank">
+          {/* Plain link: next/link prefetches same-origin URLs as portfolio pages. */}
+          <a href={link} target="_blank" rel="noopener noreferrer">
             <Image
               width={100}
               height={100}
@@ -31,7 +31,7 @@ export default function TooltipLink({
               src={image}
               className="w-8 h-auto"
             />
-          </Link>
+          </a>
         </TooltipTrigger>
         <TooltipContent className="shadow-none bg-[#C0C0C0]">
           <span>{tooltip}</span>
