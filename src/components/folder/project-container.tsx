@@ -11,7 +11,7 @@ import { useIsDesktop } from "@/hooks/use-is-desktop";
 import { openDocument } from "@/store/document-viewer-slice";
 import { openWindow } from "@/store/window-manager-slice";
 import { openUrl } from "@/store/browser-slice";
-import { WRITEUPS } from "@/constants";
+import { PROJECT_LINK_LABELS, WRITEUPS } from "@/constants";
 import { getProjectsData } from "@/store/projects-slice";
 import { Win98Button } from "../shared/win-98-button";
 
@@ -103,7 +103,7 @@ export default function ProjectContainer({ projects }: ProjectContainerProps) {
       {!isDesktop && isFileOpen && selectedFile && (
         <div className="flex gap-3 items-start border-b border-[#808080] bg-white p-3">
           <Image
-            src={getProjectIcon(selectedFile.type)}
+            src={getProjectIcon(selectedFile)}
             alt=""
             width={32}
             height={32}
@@ -168,7 +168,7 @@ export default function ProjectContainer({ projects }: ProjectContainerProps) {
               />
 
               <span className={cn("font-normal text-sm")}>
-                {selectedFile.name}
+                {PROJECT_LINK_LABELS[selectedFile.name] ?? selectedFile.name}
               </span>
             </Link>
           )}
@@ -215,7 +215,7 @@ export default function ProjectContainer({ projects }: ProjectContainerProps) {
               onDoubleClick={handleOpenProject}
             >
               <Image
-                src={getProjectIcon(project.type)}
+                src={getProjectIcon(project)}
                 alt={project.name}
                 width={40}
                 height={40}

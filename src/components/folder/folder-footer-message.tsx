@@ -17,7 +17,7 @@ export default function FolderFooterMessage({
         height={16}
         alt={selectedFile && isFileOpen ? selectedFile.name : folderName}
         src={
-          selectedFile && isFileOpen ? getProjectIcon(selectedFile.type) : icon
+          selectedFile && isFileOpen ? getProjectIcon(selectedFile) : icon
         }
         className="w-4 h-4 flex-none"
       />

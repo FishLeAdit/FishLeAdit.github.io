@@ -35,6 +35,22 @@ export const RESUME = {
   icon: "/icons/notepad.png",
 };
 
+// Pixel-art icons per project, keyed by Project.name (drawn by
+// scripts/icons/generate-project-icons.mjs). Projects without one fall back to
+// a generic icon for their type.
+export const PROJECT_ICONS: Record<string, string> = {
+  Stackwise: "/icons/projects/stackwise.svg",
+  ECOTRACK: "/icons/projects/ecotrack.svg",
+  "Pediatric Brain Tumor Segmentation": "/icons/projects/brain-tumor.svg",
+  "git-why": "/icons/projects/git-why.svg",
+};
+
+// Label for a project's live-site shortcut, keyed by Project.name; the
+// project's own name is used when there is no entry.
+export const PROJECT_LINK_LABELS: Record<string, string> = {
+  "git-why": "git-why.io",
+};
+
 // Static 90s-style write-up pages in /public, keyed by Project.writeup.
 export const WRITEUPS: Record<string, { title: string; path: string }> = {
   "brain-tumor": {

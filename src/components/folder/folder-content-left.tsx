@@ -17,7 +17,7 @@ export default function FolderContentLeft({ folder }: FolderContentLeftProps) {
 
   const getImageSrc = () => {
     if (selectedFile) {
-      return getProjectIcon(selectedFile.type);
+      return getProjectIcon(selectedFile);
     }
     return selectedProgram ? selectedProgram.image : folder.image;
   };

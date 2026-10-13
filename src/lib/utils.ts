@@ -1,13 +1,17 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { Project } from "@/types";
+import { PROJECT_ICONS } from "@/constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getProjectIcon(type: Project["type"]) {
-  return type === "RESEARCH" ? "/icons/help-book.png" : "/icons/frontend-icon.png";
+export function getProjectIcon(project: Pick<Project, "name" | "type">) {
+  return (
+    PROJECT_ICONS[project.name] ??
+    (project.type === "RESEARCH" ? "/icons/help-book.png" : "/icons/frontend-icon.png")
+  );
 }
 
 export const bootMessages = [

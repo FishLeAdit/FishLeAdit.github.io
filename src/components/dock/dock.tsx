@@ -77,12 +77,14 @@ export default function Dock() {
                 variant="w98"
                 className="flex items-center w-[70px] h-6"
               >
+                {/* Fixed size: with unoptimized images (static export) the
+                    32px file would otherwise render at full size. */}
                 <Image
-                  width={0}
-                  height={0}
+                  width={16}
+                  height={16}
                   alt="Windows logo"
                   src={"/windows.png"}
-                  className="w-auto"
+                  className="w-4 h-4"
                 />
                 <span className="font-semibold">Start</span>
               </Button>

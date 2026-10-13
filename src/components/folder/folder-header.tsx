@@ -43,7 +43,7 @@ export default function FolderHeader({ folder }: FolderHeaderProps) {
             alt={selectedFile && isFileOpen ? selectedFile.name : folder.name}
             src={
               selectedFile && isFileOpen
-                ? getProjectIcon(selectedFile.type)
+                ? getProjectIcon(selectedFile)
                 : folder.image
             }
             className="w-4 h-4"
